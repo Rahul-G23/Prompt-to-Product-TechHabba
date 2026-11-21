@@ -5,6 +5,26 @@
 
 import { API_BASE } from "../config";
 
+async function readApiResponse(response, fallbackMessage) {
+  const text = await response.text();
+  let data = null;
+
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(
+        `Backend API did not return JSON (HTTP ${response.status}). Verify VITE_API_BASE_URL and CORS_ORIGIN.`
+      );
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error(data?.detail || fallbackMessage);
+  }
+  return data;
+}
+
 export async function submitComplaint(formData) {
   let payload = formData;
 
@@ -23,21 +43,13 @@ export async function submitComplaint(formData) {
     body: payload,
   });
 
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || "Failed to submit civic complaint.");
-  }
-  return data;
+  return readApiResponse(response, "Failed to submit civic complaint.");
 }
 
 export async function trackComplaint(ticketId) {
   const cleanId = encodeURIComponent(ticketId.trim().toUpperCase());
   const response = await fetch(`${API_BASE}/complaints/${cleanId}`);
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || "Complaint record not found.");
-  }
-  return data;
+  return readApiResponse(response, "Complaint record not found.");
 }
 
 export async function getOfficerTickets(filters = {}) {
@@ -54,21 +66,13 @@ export async function getOfficerTickets(filters = {}) {
 
   const url = `${API_BASE}/officer/tickets?${params.toString()}`;
   const response = await fetch(url);
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || "Failed to load municipal ticket queue.");
-  }
-  return data;
+  return readApiResponse(response, "Failed to load municipal ticket queue.");
 }
 
 export async function getTicketDetail(ticketId) {
   const cleanId = encodeURIComponent(ticketId.trim().toUpperCase());
   const response = await fetch(`${API_BASE}/officer/tickets/${cleanId}`);
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || "Failed to load ticket details.");
-  }
-  return data;
+  return readApiResponse(response, "Failed to load ticket details.");
 }
 
 export async function updateTicket(ticketId, payload) {
@@ -80,20 +84,12 @@ export async function updateTicket(ticketId, payload) {
     },
     body: JSON.stringify(payload),
   });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || "Failed to update ticket.");
-  }
-  return data;
+  return readApiResponse(response, "Failed to update ticket.");
 }
 
 export async function getAnalytics() {
   const response = await fetch(`${API_BASE}/analytics`);
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || "Failed to fetch municipal analytics.");
-  }
-  return data;
+  return readApiResponse(response, "Failed to fetch municipal analytics.");
 }
 
 export async function loginUser(payload) {
@@ -104,11 +100,7 @@ export async function loginUser(payload) {
     },
     body: JSON.stringify(payload),
   });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || "Authentication failed.");
-  }
-  return data;
+  return readApiResponse(response, "Authentication failed.");
 }
 
 export async function resolveTicketWithProof(ticketId, formData) {
@@ -117,11 +109,7 @@ export async function resolveTicketWithProof(ticketId, formData) {
     method: "POST",
     body: formData,
   });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || "Failed to submit resolution proof.");
-  }
-  return data;
+  return readApiResponse(response, "Failed to submit resolution proof.");
 }
 
 export async function getOfficerLogs(filters = {}) {
@@ -132,10 +120,6 @@ export async function getOfficerLogs(filters = {}) {
 
   const url = `${API_BASE}/officer/logs?${params.toString()}`;
   const response = await fetch(url);
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || "Failed to fetch audit logs.");
-  }
-  return data;
+  return readApiResponse(response, "Failed to fetch audit logs.");
 }
 
