@@ -1,0 +1,55 @@
+{
+  "rubric_rules": [
+    "Safety risk must strictly outweigh public inconvenience.",
+    "Imminent danger to human life, live electricity, or open falls always warrant Critical priority.",
+    "Proximity to sensitive zones (schools, hospitals, busy transit corridors) escalates severity by one level.",
+    "Purely cosmetic or non-functional aesthetic defects must be classified as Low."
+  ],
+  "levels": {
+    "Critical": {
+      "definition": "Immediate, acute threat to human life, severe bodily harm, or catastrophic systemic failure requiring emergency intervention within 1 to 2 hours.",
+      "triggers": [
+        "Exposed live high-voltage electric wires or sparking transformers near pedestrian reach",
+        "Open, missing, or broken manhole covers on active roads or walkways",
+        "Major water main burst causing road cave-in or structural foundation undermining",
+        "Fallen heavy tree or pole completely blocking arterial road or emergency vehicle access",
+        "Toxic chemical release, gas leak, or hazardous waste spill",
+        "Imminent wall or structure collapse over public right of way"
+      ]
+    },
+    "High": {
+      "definition": "Substantial danger to public health and safety, severe property damage risk, or major disruption to essential civic services.",
+      "triggers": [
+        "Deep crater potholes on high-speed or arterial roads causing two-wheeler accidents",
+        "Raw sewage backflow entering residential homes, schools, or healthcare facilities",
+        "Large fractured tree branch hanging precariously over power lines or busy footpaths",
+        "Prolonged total power outage affecting an entire ward or neighborhood",
+        "Pack of aggressive, biting stray dogs near schools, parks, or residential gates",
+        "Severe water contamination with foul smell and discolored drinking water supply",
+        "Blocked stormwater drain causing knee-deep road waterlogging during monsoon"
+      ]
+    },
+    "Medium": {
+      "definition": "Noticeable civic inconvenience, localized hygiene issues, or moderate maintenance failures without immediate threat to life.",
+      "triggers": [
+        "Overflowing municipal waste bin or uncollected garbage pile for 2-3 days",
+        "Non-working streetlights across a residential lane or colony stretch",
+        "Continuous minor roadside potable water pipeline leakage or dripping valve",
+        "Commercial footpath encroachment forcing pedestrians onto the road shoulder",
+        "Excessive construction noise during permitted daytime hours or unauthorized dust",
+        "Damaged speed breaker or broken pedestrian guardrail"
+      ]
+    },
+    "Low": {
+      "definition": "Minor cosmetic, aesthetic, or routine non-urgent maintenance issues with negligible safety impact.",
+      "triggers": [
+        "Faded zebra crossing or road line markings",
+        "Small roadside litter or dry leaf pile awaiting scheduled sweep",
+        "Graffiti or unauthorized posters on public municipal walls",
+        "Broken or weathered public park bench",
+        "Hairline cracks on footpath tiles with no tripping hazard",
+        "Minor park garden weeding or ornamental tree pruning"
+      ]
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "roads": {
+    "primary_department": "Public Works Department",
+    "secondary_department": "Traffic Management & Police",
+    "description": "Potholes, broken asphalt, damaged footpaths, missing road signs, road cave-ins"
+  },
+  "waste": {
+    "primary_department": "Solid Waste Management",
+    "secondary_department": "Public Health & Sanitation",
+    "description": "Overflowing garbage bins, illegal dumping, uncollected household waste, dead animals in public"
+  },
+  "water supply": {
+    "primary_department": "Water Supply & Sewerage Board",
+    "secondary_department": "Public Works Department",
+    "description": "Pipeline bursts, drinking water contamination, no water supply, low water pressure, valve leaks"
+  },
+  "sewage and drainage": {
+    "primary_department": "Water Supply & Sewerage Board",
+    "secondary_department": "Stormwater Drainage Dept",
+    "description": "Overflowing manholes, missing drain covers, blocked storm drains, sewage backflow into roads"
+  },
+  "electricity and streetlights": {
+    "primary_department": "Electricity Supply Company",
+    "secondary_department": "Public Works Department",
+    "description": "Non-functioning streetlights, exposed live wires, transformer sparking, leaning electric poles"
+  },
+  "trees and parks": {
+    "primary_department": "Horticulture & Forest Department",
+    "secondary_department": "Disaster Management Cell",
+    "description": "Fallen trees blocking roads, dangerous dangling boughs, overgrown branches touching wires, park upkeep"
+  },
+  "encroachment": {
+    "primary_department": "Town Planning & Revenue Department",
+    "secondary_department": "Public Works Department",
+    "description": "Illegal construction, footpath encroachment by vendors/stalls, unauthorized barricades"
+  },
+  "noise and pollution": {
+    "primary_department": "State Pollution Control Board",
+    "secondary_department": "Local Police Department",
+    "description": "Industrial fume discharge, late-night loudspeaker violations, illegal waste burning, dust hazards"
+  },
+  "stray animals": {
+    "primary_department": "Animal Husbandry & Veterinary Services",
+    "secondary_department": "Public Health & Sanitation",
+    "description": "Aggressive stray dog packs, injured animals on roads, stray cattle blocking traffic, rabies risk"
+  },
+  "other": {
+    "primary_department": "Municipal Grievance Cell",
+    "secondary_department": "Civic Administration",
+    "description": "General civic administrative complaints and miscellaneous public issues"
+  }
+}
