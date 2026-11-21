@@ -14,32 +14,32 @@ CATEGORY_KEYWORDS = {
         "pothole", "gadda", "raste", "saalai", "road", "tar", "asphalt", "crater", "footpath",
         "pavement", "divider", "speed breaker", "highway", "gaddha", "khadda", "salai", "hadi",
         "zebra crossing", "crossing", "markings", "lane",
-        "ಗುಂಡಿ", "ರಸ್ತೆ", "ಖಡ್ಡಾ", "गड्ढा", "सड़क", "சாலை", "குழி"
+        "ಗುಂಡಿ", "ಖಡ್ಡಾ", "गड्ढा", "சாலை", "குழி"
     ],
     "waste": [
         "garbage", "kachra", "kachada", "trash", "dustbin", "waste", "rubbish", "dump", "stench",
         "smell", "rotting", "litter", "kuppai", "kachre", "dehr", "dabba", "bin",
-        "ಕಸ", "ತಿಪ್ಪೆ", "कचरा", "कूड़ा", "குப்பை"
+        "ಕಸ", "ತಿಪ್ಪೆ", "ಕಸದ", "कचरा", "कूड़ा", "कचरे", "குப்பை"
     ],
     "water supply": [
         "water", "paani", "neeru", "thanni", "pipe", "pipeline", "burst", "leak", "tap",
         "contamination", "drinking water", "jal", "kaveri", "boring", "motor", "pressure",
-        "ನೀರು", "ಕೊಳವೆ", "पानी", "नल", "जल", "தண்ணீர்", "குழாய்"
+        "ನೀರು", "ಕೊಳವೆ", "ಕುಡಿಯುವ", "ಪೈಪ್", "पानी", "नल", "जल", "தண்ணீர்", "குழாய்", "குடிநீர்"
     ],
     "sewage and drainage": [
         "sewage", "drain", "drainage", "manhole", "gutter", "naala", "chamber", "overflow",
         "clogged", "blocked drain", "gutter cover", "foul water", "stinking water",
-        "ಚರಂಡಿ", "ಮ್ಯಾನ್‌ಹೋಲ್", "गटर", "नाली", "सीवेज", "சாக்கடை"
+        "ಚರಂಡಿ", "ಮ್ಯಾನ್‌ಹೋಲ್", "ಮ್ಯಾನ್ಹೋಲ್", "गटर", "नाली", "सीवेज", "मैनहोल", "मेनहोल", "சாக்கடை", "மேன்ஹோல்"
     ],
     "electricity and streetlights": [
-        "streetlight", "light", "lamp", "pole", "wire", "cable", "current", "shock", "spark",
+        "streetlight", "street light", "light", "lamp", "pole", "wire", "cable", "current", "shock", "spark",
         "transformer", "blackout", "dark", "electricity", "meter", "bijli", "vidyut",
-        "ಬೆಳಕು", "ವಿದ್ಯುತ್", "ತಂತಿ", "बिजली", "करंट", "மின்சாரம்", "விளக்கு"
+        "ಬೆಳಕು", "ವಿದ್ಯುತ್", "ತಂತಿ", "ವೈರ್", "ಕಂಬ", "बिजली", "करंट", "स्ट्रीट लाइट", "மின்சாரம்", "விளக்கு", "தெருவிளக்கு"
     ],
     "trees and parks": [
         "tree", "branch", "mara", "maram", "ped", "leaves", "park", "garden", "fallen tree",
         "overgrown", "bough", "uprooted", "pruning",
-        "ಮರ", "ಗಿಡ", "ಉದ್ಯಾನ", "पेड़", "शाखा", "மரம்"
+        "ಮರ", "ಗಿಡ", "ಉದ್ಯಾನ", "ಕೊಂಬೆ", "ಎಲೆ", "पेड़", "शाखा", "पार्क", "बेंच", "மரம்", "பூங்கா", "கிளை"
     ],
     "encroachment": [
         "encroachment", "illegal", "vendor", "stall", "hawker", "kabza", "footpath blocked",
@@ -49,12 +49,12 @@ CATEGORY_KEYWORDS = {
     "noise and pollution": [
         "noise", "loudspeaker", "pollution", "smoke", "dust", "factory", "fumes", "burning",
         "air", "sound", "decibel", "chemical smell", "cracker",
-        "ಮಾಲಿನ್ಯ", "ಶಬ್ದ", "प्रदूषण", "शोर", "ध्वनि", "மாசு"
+        "ಮಾಲಿನ್ಯ", "ಶಬ್ದ", "ಹೊಗೆ", "ಪ್ರದೂಷಣೆ", "प्रदूषण", "शोर", "ध्वनि", "धुआं", "आग", "மாசு", "புகை"
     ],
     "stray animals": [
         "dog", "stray", "bite", "barking", "rabies", "puppy", "cattle", "cow", "monkey",
         "animal", "bhow", "hucchu", "kutta", "nai",
-        "ನಾಯಿ", "ದನ", "कुत्ता", "गाय", "விலங்கு", "நாய்"
+        "ನಾಯಿ", "ದನ", "ಕುಕ್ಕಲು", "ಕುನ್ನಿ", "ಕುত্তা", "कुत्ता", "कुत्तों", "गाय", "விலங்கு", "நாய்", "வெறிநாய்"
     ]
 }
 
@@ -63,20 +63,24 @@ CRITICAL_TRIGGERS = [
     "live wire", "exposed wire", "sparking", "open manhole", "broken manhole", "cave in",
     "burst main", "major burst", "gas leak", "chemical leak", "danger to life", "risk to life",
     "shock hazard", "current shock", "arterial road blocked", "collapsed wall",
-    "करंट", "खुला मैनहोल", "तार टूटा", "ಲೈವ್ ವೈರ್", "ತೆರೆದ ಮ್ಯಾನ್‌ಹೋಲ್"
+    "करंट", "खुला मैनहोल", "खुला मेनहोल", "तार टूटा", "जान जा सकती", "ಲೈವ್ ವೈರ್", "ತೆರೆದ ಮ್ಯಾನ್‌ಹೋಲ್",
+    "ಉಯಿರುಕ್ಕು ಆಪತ್ತು", "உயிருக்கு ஆபத்து", "மேன்ஹோல்", "ಬಂದ್ ಆಗಿದೆ"
 ]
 
 # High safety & health risk phrases
 HIGH_TRIGGERS = [
     "deep crater", "accident", "slip", "hospital", "school", "sewage in house", "water contamination",
     "dirty water", "foul smell water", "aggressive dog", "dog bite", "rabies", "flooding", "waterlogging",
-    "knee deep", "dangling branch", "hanging branch", "blackout"
+    "knee deep", "dangling branch", "hanging branch", "blackout",
+    "काटने", "काट रहा", "जहरीला", "धुआं", "ಒಡೆದು", "ನದಿಯಂತೆ", "ಕಲಬೆರಕೆ", "கடிக்க", "துர்நாற்றம்", "வெறிநாய்",
+    "ghis gaya", "phisl", "hospital le jana"
 ]
 
 # Low cosmetic phrases
 LOW_TRIGGERS = [
     "faded", "paint", "zebra crossing", "aesthetic", "bench", "leaf litter", "graffiti",
-    "poster", "minor scratch", "cleaning needed", "cosmetic"
+    "poster", "minor scratch", "cleaning needed", "cosmetic",
+    "पेंट", "हिल रहा", "ಒಣಗಿದ ಎಲೆ", "ಕಳೆ", "மங்கிவிட்டன"
 ]
 
 def detect_script_language(text: str) -> str:
