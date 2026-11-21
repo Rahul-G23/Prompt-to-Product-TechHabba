@@ -252,21 +252,22 @@ export default function ComplaintForm({ onTrackTicket }) {
       )}
 
       {/* Main Intake Form Card */}
-      <div className="bg-[#171717] rounded-xl border border-[#2a2a2a] shadow-xl overflow-hidden">
-        <div className="p-6 border-b border-[#242424]">
+      <div className="bg-[#171717]/85 backdrop-blur-md rounded-xl border border-[#2a2a2a]/80 shadow-2xl overflow-hidden">
+        <div className="p-6 border-b border-[#242424]/80 bg-[#101010]/70">
           <div className="flex items-center gap-2 mb-1">
-            <span className="w-2 h-2 rounded-full bg-[#A31C1B]" />
-            <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-[#A31C1B]">
+            <span className="w-2 h-2 rounded-full bg-[#5cf6d9] animate-pulse shadow-[0_0_8px_#5cf6d9]" />
+            <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-[#5cf6d9]">
               PUBLIC GRIEVANCE INTAKE
             </span>
           </div>
           <h1 className="text-xl font-black uppercase tracking-tight text-white">
             Lodge a Municipal Grievance
           </h1>
-          <p className="text-xs text-zinc-400 mt-1">
+          <p className="text-xs text-zinc-300 mt-1">
             Report road hazards, water leaks, garbage, fallen trees, or power failures. Submit in English or regional languages.
           </p>
         </div>
+
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {clientError && (

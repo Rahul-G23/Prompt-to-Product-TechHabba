@@ -2,7 +2,8 @@
  * CivicLens Main Application Root
  * Role-Based Access Control for Administrators (Municipal Officers) and Citizens.
  * Theme follows reference styling: Charcoal Black (#171717), Forest Green (#06110C), Crimson Red (#A31C1B).
- * Integrates StaggeredMenu with embedded OptionWheel and RotatingText.
+ * Ambient WebGL particle ribbon background via GhostFibers (#5cf6d9 & #4ac568).
+ * StaggeredMenu positioned on the LEFT side with embedded interactive OptionWheel.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -18,7 +19,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsConditions from './components/TermsConditions';
 import TicketDetailModal from './components/TicketDetailModal';
 import StaggeredMenu from './components/reactbits/StaggeredMenu';
-import RotatingText from './components/reactbits/RotatingText';
+import GhostFibers from './components/reactbits/GhostFibers';
 import { APP_NAME } from './config';
 
 export default function App() {
@@ -93,7 +94,7 @@ export default function App() {
 
   // Navigation mappings for StaggeredMenu and OptionWheel
   const citizenWheelItems = [
-    'Report an Issue',
+    'Report Issue',
     'Track Report',
     'Civic Analysis',
     'Privacy Policy',
@@ -128,9 +129,8 @@ export default function App() {
     }
   };
 
-  const staggeredMenuRef = useRef(null);
   const handleOpenStaggeredMenu = () => {
-    // Trigger click on StaggeredMenu toggle button
+    // Trigger click on StaggeredMenu toggle button on the left
     const toggleBtn = document.querySelector('.sm-toggle');
     if (toggleBtn) {
       toggleBtn.click();
@@ -138,11 +138,28 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#06110C] text-[#f4f4f5] transition-colors selection:bg-[#A31C1B] selection:text-white">
-      {/* Staggered Navigation Menu with OptionWheel presented on open */}
+    <div className="min-h-screen flex flex-col bg-[#06110C] text-[#f4f4f5] relative transition-colors selection:bg-[#A31C1B] selection:text-white">
+      {/* Ambient Dynamic Background Canvas using GhostFibers */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        <GhostFibers
+          glowColor="#5cf6d9"
+          layers={3}
+          twist={1.2}
+          threads={72}
+          fiberStyle="dots"
+          depthOfField={0.85}
+          hoverEffect="focus"
+          intro={true}
+          mouseInteraction={true}
+          secondaryColor="#4ac568"
+          className="w-full h-full opacity-65"
+        />
+      </div>
+
+      {/* Staggered Navigation Menu positioned on the LEFT side with embedded interactive OptionWheel */}
       <StaggeredMenu
         isFixed={true}
-        position="right"
+        position="left"
         colors={['#06110C', '#171717', '#A31C1B']}
         accentColor="#A31C1B"
         menuButtonColor="#ffffff"
@@ -155,60 +172,21 @@ export default function App() {
         onWheelChange={handleWheelSelect}
       />
 
-      {/* Navigation Header */}
-      <Navbar
-        currentUser={currentUser}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        onSignOut={currentUser ? handleSignOut : null}
-        onOpenStaggeredMenu={handleOpenStaggeredMenu}
-      />
-
-      {/* High-Impact Editorial Hero Announcement Banner with RotatingText */}
-      <div className="bg-[#171717] border-b border-[#242424] px-4 py-2.5 text-xs">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="w-2 h-2 rounded-full bg-[#A31C1B] animate-pulse" />
-            <span className="font-extrabold tracking-wider text-white uppercase text-[11px]">
-              CIVIC INTELLIGENCE
-            </span>
-            <span className="text-zinc-600 hidden sm:inline">&bull;</span>
-            <div className="inline-flex items-center">
-              <RotatingText
-                texts={[
-                  'SAFETY-CRITICAL FIRST',
-                  'INSTANT MUNICIPAL ROUTING',
-                  '100% IMMUTABLE AUDIT TRAIL',
-                  'REGIONAL LANGUAGE AI'
-                ]}
-                mainClassName="px-2.5 py-0.5 rounded bg-[#A31C1B] text-white font-black text-[11px] uppercase tracking-wide shadow-sm"
-                staggerFrom="last"
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "-120%" }}
-                staggerDuration={0.025}
-                splitLevelClassName="overflow-hidden"
-                transition={{ type: "spring", damping: 30, stiffness: 400 }}
-                rotationInterval={3500}
-              />
-            </div>
-            <span className="text-zinc-400 text-[11px] hidden lg:inline">
-              Automated multi-lingual civic triage &amp; lifecycle verification
-            </span>
-          </div>
-
-          <div className="hidden md:flex items-center gap-3 text-[11px] font-mono text-zinc-400">
-            <span className="text-[#A31C1B] font-bold tracking-wider">BUILT DIFFERENTLY</span>
-            <span>&bull;</span>
-            <span className="text-zinc-500">CHARCOAL #171717 / FOREST #06110C / CRIMSON #A31C1B</span>
-          </div>
-        </div>
+      {/* Navigation Header with Menu on LEFT */}
+      <div className="relative z-30">
+        <Navbar
+          currentUser={currentUser}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          onSignOut={currentUser ? handleSignOut : null}
+          onOpenStaggeredMenu={handleOpenStaggeredMenu}
+        />
       </div>
 
-      {/* Main Content View Switcher */}
-      <main className="flex-1">
+      {/* Main Content View Switcher with Translucent Backdrops so GhostFibers shines through */}
+      <main className="flex-1 relative z-10">
         {/* If Not Authenticated, show Login Page unless viewing Privacy or Terms */}
         {!currentUser && activeTab !== 'privacy' && activeTab !== 'terms' && (
           <LoginPage onLoginSuccess={handleLoginSuccess} />
@@ -273,7 +251,7 @@ export default function App() {
       )}
 
       {/* Municipal Civic Footer */}
-      <footer className="py-6 border-t border-[#1f1f1f] text-xs text-zinc-400 bg-[#06110C]/90">
+      <footer className="relative z-10 py-5 border-t border-[#1c2e24]/70 text-xs text-zinc-400 bg-[#06110C]/85 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
             <span className="font-bold text-white uppercase tracking-wider">
@@ -288,14 +266,14 @@ export default function App() {
           <div className="flex items-center gap-4 text-[11px]">
             <button
               onClick={() => setActiveTab('privacy')}
-              className="text-zinc-400 hover:text-[#A31C1B] transition-colors hover:underline"
+              className="text-zinc-400 hover:text-[#5cf6d9] transition-colors hover:underline"
             >
               Privacy Policy
             </button>
             <span className="text-zinc-700">&bull;</span>
             <button
               onClick={() => setActiveTab('terms')}
-              className="text-zinc-400 hover:text-[#A31C1B] transition-colors hover:underline"
+              className="text-zinc-400 hover:text-[#5cf6d9] transition-colors hover:underline"
             >
               Terms &amp; Conditions
             </button>

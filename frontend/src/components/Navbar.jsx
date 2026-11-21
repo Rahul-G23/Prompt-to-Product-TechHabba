@@ -1,8 +1,7 @@
 /**
  * CivicLens Navigation Bar
- * Responsive role-aware top bar with distinct navigation for Administrators and Citizens,
- * session indicator, role switcher, StaggeredMenu trigger, and dark mode toggle.
- * Follows editorial Charcoal Black (#171717), Forest Green (#06110C), and Crimson Red (#A31C1B).
+ * Responsive role-aware top bar with Menu toggle on the LEFT side,
+ * session indicator, role switcher, and theme styling matching GhostFibers background.
  */
 
 import React from 'react';
@@ -33,7 +32,7 @@ export default function Navbar({
 }) {
   // Navigation tabs configured strictly by authenticated role
   const citizenNav = [
-    { id: 'intake', label: 'Report an Issue', icon: FileText },
+    { id: 'intake', label: 'Report Issue', icon: FileText },
     { id: 'track', label: 'Track Report', icon: Search },
     { id: 'analysis', label: 'Analysis', icon: BarChart3 },
   ];
@@ -49,11 +48,23 @@ export default function Navbar({
   const currentNav = currentUser?.role === 'admin' ? adminNav : citizenNav;
 
   return (
-    <header className="sticky top-0 z-40 bg-[#171717]/95 border-b border-[#262626] backdrop-blur shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 bg-[#06110C]/85 border-b border-[#1c2e24]/70 backdrop-blur-md shadow-lg transition-colors">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Brand Logo & Name */}
+          {/* Left Area: Menu Button on Left + Brand Logo */}
           <div className="flex items-center gap-3">
+            {/* Menu Trigger Button on the LEFT side */}
+            <button
+              onClick={onOpenStaggeredMenu}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#171717]/90 hover:bg-[#222222] border border-[#A31C1B]/50 text-xs font-bold text-white transition-all shadow-md group"
+              title="Open Navigation Menu & Option Wheel"
+              aria-label="Open menu"
+            >
+              <Menu className="w-4 h-4 text-[#A31C1B] group-hover:scale-110 transition-transform" />
+              <span className="tracking-wide uppercase text-[11px] font-mono">Menu / Wheel</span>
+            </button>
+
+            {/* Brand Logo & Name */}
             <button
               onClick={() => {
                 if (currentUser?.role === 'admin') {
@@ -64,28 +75,26 @@ export default function Navbar({
               }}
               className="flex items-center gap-2.5 text-left focus:outline-none group"
             >
-              <div className="w-9 h-9 rounded-md bg-[#A31C1B] text-white flex items-center justify-center font-bold text-lg shadow-sm transition-transform group-hover:scale-105">
-                <ShieldAlert className="w-5 h-5" />
+              <div className="w-8 h-8 rounded-md bg-[#A31C1B] text-white flex items-center justify-center font-bold text-base shadow-sm transition-transform group-hover:scale-105">
+                <ShieldAlert className="w-4 h-4" />
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-black tracking-tight text-white uppercase">
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-base font-black tracking-tight text-white uppercase">
                     {APP_NAME}
                   </span>
-                  <span className="text-[10px] uppercase font-mono font-bold px-1.5 py-0.5 rounded bg-[#06110C] text-[#A31C1B] border border-[#A31C1B]/40">
-                    AI Triage
-                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#5cf6d9] animate-pulse shadow-[0_0_6px_#5cf6d9]" />
                 </div>
-                <div className="text-[10px] text-zinc-400 font-medium">
-                  {currentUser?.role === 'admin' ? 'Municipal Officer Console' : 'Citizen Grievance Portal'}
-                </div>
+                <span className="text-[10px] text-zinc-400 font-medium">
+                  {currentUser?.role === 'admin' ? 'Officer Portal' : 'Citizen Grievance'}
+                </span>
               </div>
             </button>
           </div>
 
-          {/* Role Navigation Items */}
+          {/* Role Navigation Items in Middle */}
           {currentUser && (
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-1.5">
               {currentNav.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
@@ -93,13 +102,13 @@ export default function Navbar({
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-md transition-all ${
+                    className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
                       isActive
-                        ? 'bg-[#A31C1B] text-white shadow-sm'
-                        : 'text-zinc-300 hover:text-white hover:bg-[#242424]'
+                        ? 'bg-[#A31C1B] text-white shadow-[0_0_10px_rgba(163,28,27,0.4)]'
+                        : 'text-zinc-300 hover:text-white hover:bg-[#171717]/80'
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-3.5 h-3.5" />
                     <span>{item.label}</span>
                   </button>
                 );
@@ -107,38 +116,28 @@ export default function Navbar({
             </nav>
           )}
 
-          {/* Right Action Area: User Session, StaggeredMenu Trigger, Role Switch & Theme */}
+          {/* Right Action Area: User Session, Role Switch & Theme */}
           <div className="flex items-center gap-2 sm:gap-3">
             {currentUser && (
-              <div className="hidden lg:flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-[#06110C] border border-[#262626] text-xs">
+              <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#171717]/80 border border-[#262626] text-xs">
                 {currentUser.role === 'admin' ? (
                   <ShieldAlert className="w-3.5 h-3.5 text-[#A31C1B]" />
                 ) : (
-                  <User className="w-3.5 h-3.5 text-emerald-400" />
+                  <User className="w-3.5 h-3.5 text-[#5cf6d9]" />
                 )}
-                <span className="font-medium text-zinc-200 max-w-[130px] truncate">
+                <span className="font-medium text-zinc-200 max-w-[120px] truncate">
                   {currentUser.name}
                 </span>
-                <span className="text-[9px] uppercase font-mono px-1 py-0.2 rounded bg-[#171717] text-zinc-400 border border-[#2a2a2a]">
+                <span className="text-[9px] uppercase font-mono px-1 py-0.2 rounded bg-[#06110C] text-[#5cf6d9] border border-[#5cf6d9]/30">
                   {currentUser.role}
                 </span>
               </div>
             )}
 
-            {/* Staggered Menu / Option Wheel Trigger Button */}
-            <button
-              onClick={onOpenStaggeredMenu}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#06110C] hover:bg-[#202020] border border-[#A31C1B]/50 text-xs font-bold text-white transition-all shadow-sm"
-              title="Open Navigation Menu & Option Wheel"
-            >
-              <Menu className="w-3.5 h-3.5 text-[#A31C1B]" />
-              <span className="tracking-wide uppercase text-[11px]">Wheel Menu</span>
-            </button>
-
             {currentUser && onSignOut && (
               <button
                 onClick={onSignOut}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-[#2e2e2e] text-xs font-medium text-zinc-300 hover:text-white hover:bg-[#242424] transition-colors"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-[#2e2e2e] text-xs font-medium text-zinc-300 hover:text-white hover:bg-[#171717] transition-colors"
                 title="Sign out and switch role"
               >
                 <LogOut className="w-3.5 h-3.5" />
@@ -149,7 +148,7 @@ export default function Navbar({
             {/* Dark Mode Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-md text-zinc-400 hover:text-white hover:bg-[#242424] transition-colors"
+              className="p-2 rounded-md text-zinc-400 hover:text-white hover:bg-[#171717] transition-colors"
               aria-label="Toggle dark mode"
               title="Toggle dark mode"
             >

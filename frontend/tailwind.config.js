@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Image Theme Palette
+        // Theme Palette matching reference image
         charcoal: {
           DEFAULT: '#171717', // Charcoal Black from reference image
           50: '#2c2c2c',
@@ -34,6 +34,10 @@ export default {
           subtle: 'rgba(163, 28, 27, 0.15)',
           border: 'rgba(163, 28, 27, 0.4)',
         },
+        mint: {
+          DEFAULT: '#5cf6d9', // GhostFibers glow color
+          secondary: '#4ac568',
+        },
         // Primary brand aliases mapped to Crimson & Charcoal
         brand: {
           50: 'rgba(163, 28, 27, 0.08)',
@@ -44,6 +48,20 @@ export default {
           700: '#871716',
           800: '#6d1211',
           900: '#520c0b',
+        },
+        // Map slate-900 / 950 to translucent Charcoal and Forest so GhostFibers shines through
+        slate: {
+          950: '#06110C',
+          900: 'rgba(23, 23, 23, 0.85)',
+          800: 'rgba(32, 32, 32, 0.85)',
+          700: '#2a2a2a',
+          600: '#52525b',
+          500: '#71717a',
+          400: '#a1a1aa',
+          300: '#d4d4d8',
+          200: '#e4e4e7',
+          100: '#f4f4f5',
+          50: '#fafafa',
         }
       },
       borderRadius: {

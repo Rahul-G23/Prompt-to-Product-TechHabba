@@ -70,26 +70,27 @@ export default function LoginPage({ onLoginSuccess }) {
   ];
 
   return (
-    <div className="min-h-[85vh] flex flex-col items-center justify-center px-4 py-10 bg-[#06110C]">
-      <div className="w-full max-w-lg bg-[#171717] border border-[#2a2a2a] rounded-xl shadow-2xl overflow-hidden">
+    <div className="min-h-[85vh] flex flex-col items-center justify-center px-4 py-10 bg-transparent relative z-10">
+      <div className="w-full max-w-lg bg-[#171717]/85 border border-[#2a2a2a]/80 backdrop-blur-md rounded-xl shadow-2xl overflow-hidden">
         {/* Editorial Header */}
-        <div className="bg-[#101010] text-white p-7 text-center border-b border-[#242424] relative">
+        <div className="bg-[#101010]/90 text-white p-7 text-center border-b border-[#242424]/80 relative">
           <div className="w-12 h-12 mx-auto rounded-lg bg-[#A31C1B] flex items-center justify-center text-white mb-3 shadow-lg">
             <Shield className="w-7 h-7" />
           </div>
-          <div className="inline-block mb-1 text-[10px] uppercase font-mono font-bold tracking-widest text-[#A31C1B]">
-            BUILT DIFFERENTLY &bull; URBAN INTELLIGENCE
+          <div className="inline-block mb-1 text-[10px] uppercase font-mono font-bold tracking-widest text-[#5cf6d9]">
+            URBAN INTELLIGENCE &bull; MUNICIPAL AI
           </div>
           <h1 className="text-2xl font-black uppercase tracking-tight text-white">
             {APP_NAME} PORTAL
           </h1>
-          <p className="text-xs text-zinc-400 mt-1 max-w-sm mx-auto">
+          <p className="text-xs text-zinc-300 mt-1 max-w-sm mx-auto">
             AI Triage &bull; Regional Language Processing &bull; Verifiable Resolution
           </p>
         </div>
 
         {/* Role Selection Tabs */}
-        <div className="grid grid-cols-2 border-b border-[#262626] bg-[#0c0c0c]">
+        <div className="grid grid-cols-2 border-b border-[#262626]/80 bg-[#0c0c0c]/80">
+
           <button
             type="button"
             onClick={() => { setActiveRoleTab('citizen'); setError(null); }}

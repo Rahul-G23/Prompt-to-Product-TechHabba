@@ -258,6 +258,13 @@ const OptionWheel = ({
     applyTarget(targetRef.current, false);
   }, [items, fontSize, spacing, curve, tilt, blur, fade, minOpacity, side, loop, smoothing, applyTarget]);
 
+  // Synchronize when defaultSelected changes from parent
+  useEffect(() => {
+    if (defaultSelected !== undefined && defaultSelected !== null) {
+      applyTarget(defaultSelected, true);
+    }
+  }, [defaultSelected, applyTarget]);
+
   useEffect(
     () => () => {
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);

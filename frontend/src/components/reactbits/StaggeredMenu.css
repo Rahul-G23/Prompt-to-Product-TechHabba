@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 2rem;
+  padding: 1rem 1.5rem;
   background: transparent;
   pointer-events: none;
   z-index: 20;
@@ -32,6 +32,13 @@
 
 .staggered-menu-header > * {
   pointer-events: auto;
+}
+
+/* When positioned left, anchor toggle button to the top-left */
+[data-position='left'] .staggered-menu-header {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 1rem;
 }
 
 .sm-logo {
@@ -53,9 +60,9 @@
   align-items: center;
   gap: 0.5rem;
   background: #171717;
-  border: 1px solid rgba(163, 28, 27, 0.4);
+  border: 1px solid rgba(163, 28, 27, 0.5);
   border-radius: 6px;
-  padding: 6px 14px;
+  padding: 7px 15px;
   cursor: pointer;
   color: #f4f4f5;
   font-weight: 700;
@@ -65,13 +72,14 @@
   line-height: 1;
   overflow: visible;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
 }
 
 .sm-toggle:hover {
   background: #222222;
   border-color: #A31C1B;
   color: #ffffff;
+  box-shadow: 0 0 12px rgba(163, 28, 27, 0.4);
 }
 
 .sm-toggle:focus-visible {
@@ -154,6 +162,7 @@
   left: 0;
   border-left: none;
   border-right: 1px solid rgba(163, 28, 27, 0.4);
+  box-shadow: 15px 0 40px rgba(6, 17, 12, 0.95);
 }
 
 .sm-prelayers {
@@ -182,6 +191,11 @@
   opacity: 0;
 }
 
+[data-position='left'] .sm-prelayer {
+  right: auto;
+  left: 0;
+}
+
 .sm-panel-inner {
   flex: 1;
   display: flex;
@@ -208,10 +222,10 @@
   position: relative;
   color: #ffffff;
   font-weight: 800;
-  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
   cursor: pointer;
   line-height: 1.1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
   transition: all 0.25s ease;
   display: inline-flex;

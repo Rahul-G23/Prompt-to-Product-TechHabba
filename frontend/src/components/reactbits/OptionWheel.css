@@ -1,7 +1,7 @@
 .option-wheel {
-  --ow-text-color: #737373;
+  --ow-text-color: #8a8a8e;
   --ow-active-color: #A31C1B;
-  --ow-font-size: 1.4rem;
+  --ow-font-size: 1.45rem;
   --ow-inset: 20px;
 
   position: relative;
@@ -26,14 +26,14 @@
   left: var(--ow-inset);
   white-space: nowrap;
   font-size: var(--ow-font-size);
-  line-height: 1.1;
-  font-weight: 500;
+  line-height: 1.15;
+  font-weight: 600;
   letter-spacing: -0.01em;
   transform-origin: left center;
   cursor: pointer;
   will-change: transform, opacity, filter;
   color: color-mix(in srgb, var(--ow-active-color) calc(var(--ow-p, 0) * 100%), var(--ow-text-color));
-  transition: text-shadow 0.15s ease;
+  transition: text-shadow 0.2s ease, color 0.2s ease;
 }
 
 .option-wheel--right .option-wheel__item {
@@ -44,5 +44,6 @@
 
 .option-wheel__item--selected {
   font-weight: 800;
-  text-shadow: 0 0 12px rgba(163, 28, 27, 0.4);
+  color: #A31C1B;
+  text-shadow: 0 0 16px rgba(163, 28, 27, 0.65), 0 0 25px rgba(92, 246, 217, 0.25);
 }
