@@ -15,6 +15,7 @@ from schemas import TicketRead
 from services.image_processor import sanitize_and_save_image
 from services.rate_limiter import limiter
 from services.ai_classifier import classify_complaint
+from services.duplicate_detector import check_and_link_duplicate
 from config import DEPARTMENTS, ALLOWED_CATEGORIES, ALLOWED_SEVERITIES
 
 router = APIRouter(prefix="/api/complaints", tags=["Complaints"])
@@ -114,6 +115,12 @@ async def submit_complaint(
     db.add(ticket)
     db.commit()
     db.refresh(ticket)
+
+    # 7. Deduplication Check against open complaints
+    parent_match = check_and_link_duplicate(db, ticket)
+    if parent_match:
+        db.refresh(ticket)
+
     return ticket
 
 @router.get("/{ticket_id}", response_model=TicketRead)
