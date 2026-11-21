@@ -7,7 +7,6 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import Navbar from './components/Navbar';
 import LoginPage from './components/LoginPage';
 import ComplaintForm from './components/ComplaintForm';
 import TrackTicket from './components/TrackTicket';
@@ -138,11 +137,11 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#06110C] text-[#f4f4f5] relative transition-colors selection:bg-[#A31C1B] selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#07071f] text-[#f4f4ff] relative transition-colors selection:bg-[#7c3cff] selection:text-white">
       {/* Ambient Dynamic Background Canvas using GhostFibers */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
         <GhostFibers
-          glowColor="#5cf6d9"
+          glowColor="#67e8f9"
           layers={3}
           twist={1.2}
           threads={72}
@@ -151,39 +150,29 @@ export default function App() {
           hoverEffect="focus"
           intro={true}
           mouseInteraction={true}
-          secondaryColor="#4ac568"
+          secondaryColor="#7c3cff"
           className="w-full h-full opacity-65"
         />
       </div>
 
       {/* Staggered Navigation Menu positioned on the LEFT side with embedded interactive OptionWheel */}
-      <StaggeredMenu
-        isFixed={true}
-        position="left"
-        colors={['#06110C', '#171717', '#A31C1B']}
-        accentColor="#A31C1B"
-        menuButtonColor="#ffffff"
-        openMenuButtonColor="#A31C1B"
-        brandTitle={APP_NAME}
-        items={staggeredMenuItems}
-        showWheel={true}
-        wheelItems={activeWheelItems}
-        wheelSelectedIndex={wheelIndex >= 0 ? wheelIndex : 0}
-        onWheelChange={handleWheelSelect}
-      />
-
-      {/* Navigation Header with Menu on LEFT */}
-      <div className="relative z-30">
-        <Navbar
-          currentUser={currentUser}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-          onSignOut={currentUser ? handleSignOut : null}
-          onOpenStaggeredMenu={handleOpenStaggeredMenu}
+      {currentUser && (
+        <StaggeredMenu
+          isFixed={true}
+          position="left"
+          colors={['#07071f', '#11113a', '#7c3cff']}
+          accentColor="#67e8f9"
+          menuButtonColor="#ffffff"
+          openMenuButtonColor="#67e8f9"
+          brandTitle={APP_NAME}
+          items={staggeredMenuItems}
+          showWheel={true}
+          wheelItems={activeWheelItems}
+          wheelSelectedIndex={wheelIndex >= 0 ? wheelIndex : 0}
+          onWheelChange={handleWheelSelect}
+          onLogout={handleSignOut}
         />
-      </div>
+      )}
 
       {/* Main Content View Switcher with Translucent Backdrops so GhostFibers shines through */}
       <main className="flex-1 relative z-10">
@@ -250,43 +239,6 @@ export default function App() {
         />
       )}
 
-      {/* Municipal Civic Footer */}
-      <footer className="relative z-10 py-5 border-t border-[#1c2e24]/70 text-xs text-zinc-400 bg-[#06110C]/85 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
-            <span className="font-bold text-white uppercase tracking-wider">
-              {APP_NAME} &bull; MUNICIPAL AI GRIEVANCE SYSTEM
-            </span>
-            <span className="hidden sm:inline text-zinc-700">|</span>
-            <span className="text-[11px] text-zinc-400">
-              Zero PII forward to LLM &bull; WCAG AA Compliant &bull; Multilingual
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4 text-[11px]">
-            <button
-              onClick={() => setActiveTab('privacy')}
-              className="text-zinc-400 hover:text-[#5cf6d9] transition-colors hover:underline"
-            >
-              Privacy Policy
-            </button>
-            <span className="text-zinc-700">&bull;</span>
-            <button
-              onClick={() => setActiveTab('terms')}
-              className="text-zinc-400 hover:text-[#5cf6d9] transition-colors hover:underline"
-            >
-              Terms &amp; Conditions
-            </button>
-            <span className="text-zinc-700">&bull;</span>
-            <button
-              onClick={handleSignOut}
-              className="text-[#A31C1B] font-bold hover:underline"
-            >
-              {currentUser ? `Sign Out (${currentUser.role})` : 'Role Sign In'}
-            </button>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

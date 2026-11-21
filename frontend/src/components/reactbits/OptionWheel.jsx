@@ -26,7 +26,7 @@ const OptionWheel = ({
   activeColor = '#ffffff',
   side = 'left',
   fontSize = 3,
-  spacing = 1.4,
+  spacing = 1.15,
   curve = 1,
   tilt = 6,
   blur = 2,
@@ -64,7 +64,7 @@ const OptionWheel = ({
   cfgRef.current = {
     count: items.length,
     items,
-    rowH: Math.max(fontSize * spacing * remPx, 1),
+    rowH: 1,
     curve,
     tilt,
     blur,
@@ -85,6 +85,13 @@ const OptionWheel = ({
     const dt = Math.min((now - lastRef.current) / 1000, 0.05);
     lastRef.current = now;
     const cfg = cfgRef.current;
+    if (rootRef.current) {
+      const availableHeight = rootRef.current.clientHeight;
+      const preferredRow = fontSizeFromConfig(cfg) * spacingFromConfig(cfg) * remPx;
+      cfg.rowH = availableHeight > 0
+        ? Math.min(Math.max(preferredRow, availableHeight / (cfg.count > 1 ? cfg.count : 2)), availableHeight / 4.2)
+        : preferredRow;
+    }
     const tau = Math.max(cfg.smoothing, 1) / 1000;
     const k = 1 - Math.exp(-dt / tau);
 

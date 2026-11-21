@@ -59,8 +59,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: #171717;
-  border: 1px solid rgba(163, 28, 27, 0.5);
+  background: rgba(17, 17, 58, 0.78);
+  border: 1px solid rgba(103, 232, 249, 0.38);
   border-radius: 6px;
   padding: 7px 15px;
   cursor: pointer;
@@ -76,8 +76,8 @@
 }
 
 .sm-toggle:hover {
-  background: #222222;
-  border-color: #A31C1B;
+  background: rgba(124, 60, 255, 0.22);
+  border-color: #67e8f9;
   color: #ffffff;
   box-shadow: 0 0 12px rgba(163, 28, 27, 0.4);
 }
@@ -140,11 +140,11 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: clamp(340px, 45vw, 520px);
+  width: clamp(420px, 50vw, 620px);
   height: 100%;
-  background: #171717; /* Charcoal Black */
-  border-left: 1px solid rgba(163, 28, 27, 0.4);
-  box-shadow: -15px 0 40px rgba(6, 17, 12, 0.9);
+  background: rgba(7, 7, 31, 0.82);
+  border-left: 1px solid rgba(103, 232, 249, 0.28);
+  box-shadow: -15px 0 40px rgba(7, 7, 31, 0.9);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   display: flex;
@@ -161,8 +161,8 @@
   right: auto;
   left: 0;
   border-left: none;
-  border-right: 1px solid rgba(163, 28, 27, 0.4);
-  box-shadow: 15px 0 40px rgba(6, 17, 12, 0.95);
+  border-right: 1px solid rgba(103, 232, 249, 0.28);
+  box-shadow: 15px 0 40px rgba(7, 7, 31, 0.95);
 }
 
 .sm-prelayers {
@@ -170,7 +170,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: clamp(340px, 45vw, 520px);
+  width: clamp(420px, 50vw, 620px);
   pointer-events: none;
   z-index: 5;
   opacity: 0;
@@ -200,7 +200,90 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  min-height: 0;
+}
+
+.sm-wheel-container {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 1.25rem 1.1rem;
+}
+
+.sm-wheel-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.5rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(103, 232, 249, 0.12);
+}
+
+.sm-wheel-kicker {
+  color: #67e8f9;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.sm-wheel-active {
+  max-width: 55%;
+  overflow: hidden;
+  color: #c4b5fd;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-align: right;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.sm-logout-button {
+  width: 100%;
+  min-height: 3.25rem;
+  margin-top: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  border: 1px solid rgba(103, 232, 249, 0.28);
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #8856f3 0%, #702ce1 100%);
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 10px 28px rgba(124, 60, 255, 0.22);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.sm-logout-button:hover {
+  transform: translateY(-1px);
+  border-color: #67e8f9;
+  background: linear-gradient(135deg, #9b70f7, #7a3ee7);
+}
+
+.sm-logout-button:focus-visible {
+  outline: 2px solid #67e8f9;
+  outline-offset: 3px;
+}
+
+.sm-logout-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.sm-wheel-fill {
+  position: relative;
+  flex: 1;
+  min-height: 280px;
 }
 
 .sm-panel-list {

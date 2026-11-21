@@ -2,7 +2,7 @@
  * CivicLens Citizen Complaint Intake Form
  * Multilingual complaint submission, client-side photo validation,
  * geolocation detection, and immediate AI triage confirmation.
- * Follows Charcoal Black (#171717), Forest Green (#06110C), and Crimson Red (#A31C1B) palette.
+ * Uses a deep navy, cyan, and violet glass palette matching the visual reference.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -137,12 +137,12 @@ export default function ComplaintForm({ onTrackTicket }) {
 
   // Municipal department loop
   const partnerAgencies = [
-    { title: "BBMP Roads", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">BBMP Road Infrastructure</span> },
-    { title: "BWSSB Water", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">BWSSB Water &amp; Drainage</span> },
-    { title: "BESCOM Power", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">BESCOM Power Grid</span> },
-    { title: "Fire Force", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">State Fire &amp; Emergency</span> },
-    { title: "Waste Mgmt", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">Solid Waste Directorate</span> },
-    { title: "Traffic", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">Traffic Safety Command</span> },
+    { title: "BBMP Roads", node: <span className="px-3 py-1 rounded bg-[#11113a]/70 border border-[#67e8f9]/20 text-[11px] font-bold text-zinc-300 uppercase tracking-wider">BBMP Road Infrastructure</span> },
+    { title: "BWSSB Water", node: <span className="px-3 py-1 rounded bg-[#11113a]/70 border border-[#67e8f9]/20 text-[11px] font-bold text-zinc-300 uppercase tracking-wider">BWSSB Water &amp; Drainage</span> },
+    { title: "BESCOM Power", node: <span className="px-3 py-1 rounded bg-[#11113a]/70 border border-[#67e8f9]/20 text-[11px] font-bold text-zinc-300 uppercase tracking-wider">BESCOM Power Grid</span> },
+    { title: "Fire Force", node: <span className="px-3 py-1 rounded bg-[#11113a]/70 border border-[#67e8f9]/20 text-[11px] font-bold text-zinc-300 uppercase tracking-wider">State Fire &amp; Emergency</span> },
+    { title: "Waste Mgmt", node: <span className="px-3 py-1 rounded bg-[#11113a]/70 border border-[#67e8f9]/20 text-[11px] font-bold text-zinc-300 uppercase tracking-wider">Solid Waste Directorate</span> },
+    { title: "Traffic", node: <span className="px-3 py-1 rounded bg-[#11113a]/70 border border-[#67e8f9]/20 text-[11px] font-bold text-zinc-300 uppercase tracking-wider">Traffic Safety Command</span> },
   ];
 
   return (
@@ -159,10 +159,10 @@ export default function ComplaintForm({ onTrackTicket }) {
 
       {/* Success Confirmation Card */}
       {successResult && (
-        <div className="mb-8 p-6 rounded-xl bg-[#171717] border border-[#A31C1B]/60 text-white shadow-2xl">
+        <div className="mb-8 p-6 rounded-xl bg-[#10113a]/75 backdrop-blur-2xl border border-[#67e8f9]/25 text-white shadow-2xl">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#A31C1B] text-white flex items-center justify-center font-bold shadow-md">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#7c3cff] to-[#67e8f9] text-white flex items-center justify-center font-bold shadow-md">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
@@ -186,7 +186,7 @@ export default function ComplaintForm({ onTrackTicket }) {
             <div>
               <span className="text-xs text-zinc-400">Ticket Reference ID:</span>
               <div className="flex items-center gap-2 mt-1">
-                <span className="font-mono font-bold text-base text-[#A31C1B]">
+                <span className="font-mono font-bold text-base text-[#67e8f9]">
                   {successResult.id}
                 </span>
                 <button
@@ -242,7 +242,7 @@ export default function ComplaintForm({ onTrackTicket }) {
           <div className="mt-4 flex justify-end gap-3">
             <button
               onClick={() => onTrackTicket && onTrackTicket(successResult.id)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-[#A31C1B] hover:bg-[#871716] text-white text-xs font-bold uppercase tracking-wider transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-gradient-to-r from-[#7c3cff] to-[#5b21b6] hover:from-[#8b5cf6] hover:to-[#6d28d9] text-white text-xs font-bold uppercase tracking-wider transition-colors"
             >
               <span>Track Live Status</span>
               <ArrowRight className="w-4 h-4" />
@@ -252,8 +252,8 @@ export default function ComplaintForm({ onTrackTicket }) {
       )}
 
       {/* Main Intake Form Card */}
-      <div className="bg-[#171717]/85 backdrop-blur-md rounded-xl border border-[#2a2a2a]/80 shadow-2xl overflow-hidden">
-        <div className="p-6 border-b border-[#242424]/80 bg-[#101010]/70">
+      <div className="bg-[#10113a]/55 backdrop-blur-2xl rounded-xl border border-[#67e8f9]/20 shadow-[0_24px_80px_rgba(7,7,31,0.65)] overflow-hidden">
+        <div className="p-6 border-b border-[#67e8f9]/10 bg-[#07071f]/25">
           <div className="flex items-center gap-2 mb-1">
             <span className="w-2 h-2 rounded-full bg-[#5cf6d9] animate-pulse shadow-[0_0_8px_#5cf6d9]" />
             <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-[#5cf6d9]">
@@ -272,7 +272,7 @@ export default function ComplaintForm({ onTrackTicket }) {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {clientError && (
             <div className="p-3.5 rounded-md bg-[#241212] border border-red-900 text-red-200 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-[#A31C1B] flex-shrink-0" />
+              <AlertCircle className="w-4 h-4 text-[#67e8f9] flex-shrink-0" />
               <span>{clientError}</span>
             </div>
           )}
@@ -288,7 +288,7 @@ export default function ComplaintForm({ onTrackTicket }) {
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Describe the problem in any Indian language. Example: 'Main road pe khadda hai bahut bada' or 'ಕಸದ ತೊಟ್ಟಿ ತುಂಬಿ ರಸ್ತೆಗೆ ಚೆಲ್ಲಿದೆ' or 'Street light broken near school'."
-              className="w-full px-3.5 py-2.5 rounded-md bg-[#0c0c0c] border border-[#333] text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#A31C1B] transition-colors resize-none"
+              className="w-full px-3.5 py-2.5 rounded-md bg-[#07071f]/70 border border-[#67e8f9]/15 text-sm text-white placeholder-zinc-400 focus:outline-none focus:border-[#67e8f9] focus:ring-2 focus:ring-[#7c3cff]/30 transition-all backdrop-blur-xl resize-none"
             />
             <div className="flex justify-between items-center mt-1 text-[11px] text-zinc-500">
               <span>Automatic language detection &amp; translation</span>
@@ -303,7 +303,7 @@ export default function ComplaintForm({ onTrackTicket }) {
             </label>
             
             {!photoPreview ? (
-              <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#333] hover:border-[#A31C1B] rounded-lg p-6 cursor-pointer bg-[#0c0c0c] transition-colors">
+              <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#67e8f9]/20 hover:border-[#67e8f9] rounded-lg p-6 cursor-pointer bg-[#07071f]/55 backdrop-blur-xl transition-colors">
                 <Camera className="w-8 h-8 text-zinc-500 mb-2" />
                 <span className="text-xs font-semibold text-zinc-300">Click to upload photo of issue</span>
                 <span className="text-[11px] text-zinc-500 mt-0.5">JPEG, PNG or WebP &bull; Maximum 5 MB</span>
@@ -315,7 +315,7 @@ export default function ComplaintForm({ onTrackTicket }) {
                 />
               </label>
             ) : (
-              <div className="relative inline-block border border-[#333] rounded-lg overflow-hidden bg-[#0c0c0c]">
+              <div className="relative inline-block border border-[#67e8f9]/20 rounded-lg overflow-hidden bg-[#07071f]/55 backdrop-blur-xl">
                 <img
                   src={photoPreview}
                   alt="Upload preview"
@@ -324,7 +324,7 @@ export default function ComplaintForm({ onTrackTicket }) {
                 <button
                   type="button"
                   onClick={removePhoto}
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-black/80 hover:bg-[#A31C1B] text-white transition-colors"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-black/80 hover:bg-[#7c3cff] text-white transition-colors"
                   title="Remove photo"
                 >
                   <X className="w-4 h-4" />
@@ -345,7 +345,7 @@ export default function ComplaintForm({ onTrackTicket }) {
                 value={locationText}
                 onChange={(e) => setLocationText(e.target.value)}
                 placeholder="e.g. 5th Cross, Near Metro Station, Indiranagar"
-                className="w-full px-3.5 py-2.5 rounded-md bg-[#0c0c0c] border border-[#333] text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#A31C1B] transition-colors"
+                className="w-full px-3.5 py-2.5 rounded-md bg-[#07071f]/65 border border-[#67e8f9]/15 text-sm text-white placeholder-zinc-400 backdrop-blur-xl focus:outline-none focus:border-[#67e8f9] focus:ring-2 focus:ring-[#7c3cff]/30 transition-all"
               />
             </div>
 
@@ -358,18 +358,18 @@ export default function ComplaintForm({ onTrackTicket }) {
                   type="text"
                   readOnly
                   value={coords.lat ? `${coords.lat.toFixed(4)}, ${coords.lon.toFixed(4)}` : 'Coordinates not attached'}
-                  className="w-full px-3 py-2.5 rounded-md bg-[#0c0c0c] border border-[#333] text-xs font-mono text-zinc-400 focus:outline-none"
+                  className="w-full px-3 py-2.5 rounded-md bg-[#07071f]/65 border border-[#67e8f9]/15 text-xs font-mono text-zinc-400 backdrop-blur-xl focus:outline-none"
                 />
                 <button
                   type="button"
                   onClick={handleGetLocation}
                   disabled={geoLoading}
-                  className="px-3 py-2.5 rounded-md border border-[#333] hover:border-[#A31C1B] bg-[#0c0c0c] text-xs font-semibold text-zinc-300 hover:text-white flex items-center gap-1.5 whitespace-nowrap transition-colors"
+                  className="px-3 py-2.5 rounded-md border border-[#67e8f9]/20 hover:border-[#67e8f9] bg-[#11113a]/70 text-xs font-semibold text-zinc-300 hover:text-white flex items-center gap-1.5 whitespace-nowrap transition-colors"
                 >
                   {geoLoading ? (
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                   ) : (
-                    <MapPin className="w-3.5 h-3.5 text-[#A31C1B]" />
+                    <MapPin className="w-3.5 h-3.5 text-[#67e8f9]" />
                   )}
                   <span>Detect</span>
                 </button>
@@ -388,7 +388,7 @@ export default function ComplaintForm({ onTrackTicket }) {
               value={contactNumber}
               onChange={(e) => setContactNumber(e.target.value)}
               placeholder="10-digit mobile number for status SMS"
-              className="w-full px-3.5 py-2.5 rounded-md bg-[#0c0c0c] border border-[#333] text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#A31C1B] transition-colors max-w-sm"
+              className="w-full px-3.5 py-2.5 rounded-md bg-[#07071f]/65 border border-[#67e8f9]/15 text-sm text-white placeholder-zinc-400 backdrop-blur-xl focus:outline-none focus:border-[#67e8f9] focus:ring-2 focus:ring-[#7c3cff]/30 transition-all max-w-sm"
             />
             <p className="text-[11px] text-zinc-500 mt-1">
               Safety notice: Contact numbers are never forwarded to AI inference models.
@@ -400,7 +400,7 @@ export default function ComplaintForm({ onTrackTicket }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-6 rounded-md bg-[#A31C1B] hover:bg-[#871716] active:bg-[#6d1211] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all disabled:opacity-50"
+              className="w-full py-3.5 px-6 rounded-md bg-gradient-to-r from-[#7c3cff] to-[#5b21b6] hover:from-[#8b5cf6] hover:to-[#6d28d9] active:from-[#6d28d9] active:to-[#4c1d95] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(124,60,255,0.28)] transition-all disabled:opacity-50"
             >
               {loading ? (
                 <>

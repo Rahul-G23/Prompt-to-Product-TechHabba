@@ -25,6 +25,7 @@ export const StaggeredMenu = ({
   wheelItems = [],
   wheelSelectedIndex = 0,
   onWheelChange,
+  onLogout,
   onMenuOpen,
   onMenuClose
 }) => {
@@ -371,14 +372,6 @@ export const StaggeredMenu = ({
                 </span>
               </span>
             </button>
-            <div className="sm-logo hidden sm:flex" aria-label="Logo">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#A31C1B]" />
-                <span className="text-xs font-bold uppercase tracking-widest text-zinc-300">
-                  {brandTitle}
-                </span>
-              </div>
-            </div>
           </>
         ) : (
           <>
@@ -430,40 +423,14 @@ export const StaggeredMenu = ({
 
       <aside id="staggered-menu-panel" ref={panelRef} className="staggered-menu-panel" aria-hidden={!open}>
         <div className="sm-panel-inner">
-          {/* Top Panel Brand Title */}
-          <div className="pb-3 border-b border-[#242424] flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-[#5cf6d9] animate-pulse shadow-[0_0_8px_#5cf6d9]" />
-              <span className="text-xs font-bold uppercase tracking-widest text-zinc-100">
-                Civic View Console
-              </span>
-            </div>
-            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-[#06110C] text-[#5cf6d9] border border-[#5cf6d9]/30 font-bold">
-              Option Wheel
-            </span>
-          </div>
-
           {/* Interactive Option Wheel presented when StaggeredMenu is open */}
           {showWheel && wheelItems && wheelItems.length > 0 && (
-            <div className="sm-wheel-container my-2 p-3.5 rounded-xl bg-[#06110C]/90 border border-[#A31C1B]/40 shadow-2xl backdrop-blur-md">
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#1c1c1c]">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#A31C1B]" />
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-200">
-                    Rotate or Drag Wheel
-                  </span>
-                </div>
-                <span className="text-[10px] text-[#5cf6d9] font-mono tracking-tight font-semibold">
-                  INTERACTIVE
-                </span>
+            <div className="sm-wheel-container rounded-xl bg-[#07071f]/55 border border-[#67e8f9]/20 shadow-2xl backdrop-blur-xl">
+              <div className="sm-wheel-label">
+                <span className="sm-wheel-kicker">Navigation</span>
+                <span className="sm-wheel-active">{wheelItems[wheelSelectedIndex] || 'Select View'}</span>
               </div>
-              <div className="mb-2 text-center text-xs">
-                <span className="text-zinc-400 font-mono text-[11px]">Active View: </span>
-                <span className="font-bold text-[#A31C1B] uppercase tracking-wider">
-                  {wheelItems[wheelSelectedIndex] || 'Select View'}
-                </span>
-              </div>
-              <div style={{ height: '200px', position: 'relative' }}>
+              <div className="sm-wheel-fill">
                 <OptionWheel
                   items={wheelItems}
                   defaultSelected={wheelSelectedIndex ?? 0}
@@ -474,8 +441,8 @@ export const StaggeredMenu = ({
                   }}
                   textColor="#8a8a8e"
                   activeColor="#A31C1B"
-                  fontSize={1.4}
-                  spacing={1.35}
+                  fontSize={3.1}
+                  spacing={1.45}
                   curve={0.75}
                   tilt={3.5}
                   side="left"
@@ -484,38 +451,20 @@ export const StaggeredMenu = ({
               </div>
             </div>
           )}
+          {onLogout && (
+            <button
+              type="button"
+              className="sm-logout-button"
+              onClick={() => {
+                closeMenu();
+                onLogout();
+              }}
+            >
+              <span className="sm-logout-icon" aria-hidden="true">↪</span>
+              <span>Logout</span>
+            </button>
+          )}
 
-
-          {/* Staggered Navigation Items List */}
-          <ul className="sm-panel-list" role="list" data-numbering={displayItemNumbering || undefined}>
-            {items && items.length ? (
-              items.map((it, idx) => (
-                <li className="sm-panel-itemWrap" key={it.label + idx}>
-                  <a
-                    className="sm-panel-item"
-                    href={it.link || '#'}
-                    onClick={(e) => {
-                      if (it.onClick) {
-                        e.preventDefault();
-                        it.onClick();
-                        closeMenu();
-                      }
-                    }}
-                    aria-label={it.ariaLabel || it.label}
-                    data-index={idx + 1}
-                  >
-                    <span className="sm-panel-itemLabel">{it.label}</span>
-                  </a>
-                </li>
-              ))
-            ) : (
-              <li className="sm-panel-itemWrap" aria-hidden="true">
-                <span className="sm-panel-item">
-                  <span className="sm-panel-itemLabel">No items</span>
-                </span>
-              </li>
-            )}
-          </ul>
 
           {displaySocials && socialItems && socialItems.length > 0 && (
             <div className="sm-socials" aria-label="Social links">
