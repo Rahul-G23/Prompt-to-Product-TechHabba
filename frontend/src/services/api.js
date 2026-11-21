@@ -6,9 +6,21 @@
 import { API_BASE } from "../config";
 
 export async function submitComplaint(formData) {
+  let payload = formData;
+
+  if (!(formData instanceof FormData)) {
+    payload = new FormData();
+    if (formData.text?.trim()) payload.append("raw_text", formData.text.trim());
+    if (formData.photo) payload.append("photo", formData.photo);
+    if (formData.locationText?.trim()) payload.append("location_text", formData.locationText.trim());
+    if (formData.latitude != null) payload.append("latitude", String(formData.latitude));
+    if (formData.longitude != null) payload.append("longitude", String(formData.longitude));
+    if (formData.contactNumber?.trim()) payload.append("contact_number", formData.contactNumber.trim());
+  }
+
   const response = await fetch(`${API_BASE}/complaints`, {
     method: "POST",
-    body: formData,
+    body: payload,
   });
 
   const data = await response.json();

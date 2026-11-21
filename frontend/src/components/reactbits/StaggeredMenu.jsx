@@ -440,7 +440,7 @@ export const StaggeredMenu = ({
                     }
                   }}
                   textColor="#8a8a8e"
-                  activeColor="#A31C1B"
+                  activeColor="#8856f3"
                   fontSize={3.1}
                   spacing={1.45}
                   curve={0.75}

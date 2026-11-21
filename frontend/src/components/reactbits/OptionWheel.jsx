@@ -64,7 +64,9 @@ const OptionWheel = ({
   cfgRef.current = {
     count: items.length,
     items,
-    rowH: 1,
+    rowH: Math.max(fontSize * spacing * remPx, 1),
+    fontSize,
+    spacing,
     curve,
     tilt,
     blur,
@@ -87,7 +89,7 @@ const OptionWheel = ({
     const cfg = cfgRef.current;
     if (rootRef.current) {
       const availableHeight = rootRef.current.clientHeight;
-      const preferredRow = fontSizeFromConfig(cfg) * spacingFromConfig(cfg) * remPx;
+      const preferredRow = cfg.fontSize * cfg.spacing * remPx;
       cfg.rowH = availableHeight > 0
         ? Math.min(Math.max(preferredRow, availableHeight / (cfg.count > 1 ? cfg.count : 2)), availableHeight / 4.2)
         : preferredRow;
