@@ -1,12 +1,15 @@
 /**
  * CivicLens Role-Based Authentication Gateway
  * Provides distinct, authenticated access for Administrators (Municipal Officers) and Citizens.
+ * Follows Charcoal Black (#171717), Forest Green (#06110C), and Crimson Red (#A31C1B) palette.
+ * Features LogoLoop animation of verified municipal departments.
  */
 
 import React, { useState } from 'react';
 import { Shield, User, Lock, Phone, ArrowRight, CheckCircle2, AlertCircle } from './Icons';
 import { loginUser } from '../services/api';
 import { APP_NAME } from '../config';
+import LogoLoop from './reactbits/LogoLoop';
 
 export default function LoginPage({ onLoginSuccess }) {
   const [activeRoleTab, setActiveRoleTab] = useState('citizen'); // 'citizen' or 'admin'
@@ -56,56 +59,69 @@ export default function LoginPage({ onLoginSuccess }) {
     }
   };
 
+  // Partner municipal agencies for LogoLoop
+  const partnerAgencies = [
+    { title: "BBMP Roads", node: <span className="px-3.5 py-1.5 rounded-md bg-[#171717] border border-[#A31C1B]/40 text-xs font-bold text-zinc-200 uppercase tracking-wider">BBMP Roads &amp; Infra</span> },
+    { title: "BWSSB Water", node: <span className="px-3.5 py-1.5 rounded-md bg-[#171717] border border-[#A31C1B]/40 text-xs font-bold text-zinc-200 uppercase tracking-wider">BWSSB Water &amp; Drainage</span> },
+    { title: "BESCOM Power", node: <span className="px-3.5 py-1.5 rounded-md bg-[#171717] border border-[#A31C1B]/40 text-xs font-bold text-zinc-200 uppercase tracking-wider">BESCOM Electricity Board</span> },
+    { title: "Fire & Rescue", node: <span className="px-3.5 py-1.5 rounded-md bg-[#171717] border border-[#A31C1B]/40 text-xs font-bold text-zinc-200 uppercase tracking-wider">State Fire &amp; Rescue</span> },
+    { title: "Solid Waste", node: <span className="px-3.5 py-1.5 rounded-md bg-[#171717] border border-[#A31C1B]/40 text-xs font-bold text-zinc-200 uppercase tracking-wider">Solid Waste Directorate</span> },
+    { title: "Traffic Command", node: <span className="px-3.5 py-1.5 rounded-md bg-[#171717] border border-[#A31C1B]/40 text-xs font-bold text-zinc-200 uppercase tracking-wider">City Traffic Police</span> },
+  ];
+
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg overflow-hidden">
-        {/* Header */}
-        <div className="bg-slate-900 text-white p-6 text-center border-b border-slate-800">
-          <div className="w-12 h-12 mx-auto rounded-lg bg-blue-600 flex items-center justify-center text-white mb-3">
+    <div className="min-h-[85vh] flex flex-col items-center justify-center px-4 py-10 bg-[#06110C]">
+      <div className="w-full max-w-lg bg-[#171717] border border-[#2a2a2a] rounded-xl shadow-2xl overflow-hidden">
+        {/* Editorial Header */}
+        <div className="bg-[#101010] text-white p-7 text-center border-b border-[#242424] relative">
+          <div className="w-12 h-12 mx-auto rounded-lg bg-[#A31C1B] flex items-center justify-center text-white mb-3 shadow-lg">
             <Shield className="w-7 h-7" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight">
-            Welcome to {APP_NAME}
+          <div className="inline-block mb-1 text-[10px] uppercase font-mono font-bold tracking-widest text-[#A31C1B]">
+            BUILT DIFFERENTLY &bull; URBAN INTELLIGENCE
+          </div>
+          <h1 className="text-2xl font-black uppercase tracking-tight text-white">
+            {APP_NAME} PORTAL
           </h1>
-          <p className="text-xs text-slate-300 mt-1 max-w-sm mx-auto">
-            Municipal AI Grievance Triage, Routing &amp; Verification Platform
+          <p className="text-xs text-zinc-400 mt-1 max-w-sm mx-auto">
+            AI Triage &bull; Regional Language Processing &bull; Verifiable Resolution
           </p>
         </div>
 
         {/* Role Selection Tabs */}
-        <div className="grid grid-cols-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50">
+        <div className="grid grid-cols-2 border-b border-[#262626] bg-[#0c0c0c]">
           <button
             type="button"
             onClick={() => { setActiveRoleTab('citizen'); setError(null); }}
-            className={`py-3.5 px-4 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition-colors ${
+            className={`py-3.5 px-4 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 border-b-2 transition-all ${
               activeRoleTab === 'citizen'
-                ? 'border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-400 bg-white dark:bg-slate-900'
-                : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'border-[#A31C1B] text-white bg-[#171717]'
+                : 'border-transparent text-zinc-400 hover:text-white'
             }`}
           >
-            <User className="w-4 h-4" />
+            <User className="w-4 h-4 text-[#A31C1B]" />
             <span>Login as Citizen</span>
           </button>
 
           <button
             type="button"
             onClick={() => { setActiveRoleTab('admin'); setError(null); }}
-            className={`py-3.5 px-4 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition-colors ${
+            className={`py-3.5 px-4 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 border-b-2 transition-all ${
               activeRoleTab === 'admin'
-                ? 'border-blue-700 text-blue-700 dark:border-blue-400 dark:text-blue-400 bg-white dark:bg-slate-900'
-                : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'border-[#A31C1B] text-white bg-[#171717]'
+                : 'border-transparent text-zinc-400 hover:text-white'
             }`}
           >
-            <Shield className="w-4 h-4" />
+            <Shield className="w-4 h-4 text-[#A31C1B]" />
             <span>Login as Administrator</span>
           </button>
         </div>
 
-        {/* Content Card Body */}
-        <div className="p-6">
+        {/* Form Body */}
+        <div className="p-7">
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-900 border border-red-300 dark:bg-red-950/70 dark:text-red-200 dark:border-red-800 flex items-center gap-2 text-xs">
-              <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+            <div className="mb-5 p-3 rounded-md bg-[#241212] text-red-200 border border-red-800 flex items-center gap-2 text-xs">
+              <AlertCircle className="w-4 h-4 text-[#A31C1B] flex-shrink-0" />
               <span>{error}</span>
             </div>
           )}
@@ -113,20 +129,20 @@ export default function LoginPage({ onLoginSuccess }) {
           {activeRoleTab === 'citizen' ? (
             /* Citizen Login Flow */
             <form onSubmit={handleCitizenLogin} className="space-y-4">
-              <div className="p-3 rounded-lg bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 text-xs text-slate-700 dark:text-slate-300">
-                <span className="font-semibold text-blue-900 dark:text-blue-300 block mb-1">
+              <div className="p-3.5 rounded-md bg-[#06110C] border border-[#262626] text-xs text-zinc-300">
+                <span className="font-bold text-[#A31C1B] block mb-1 uppercase tracking-wide">
                   Citizen Portal Access
                 </span>
-                Citizens can lodge civic complaints in any Indian regional language, track resolution progress with live status, and inspect public municipal analysis.
+                Citizens can lodge complaints in English or regional Indian languages, track real-time resolution progress, and inspect municipal analytics.
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  Mobile Number / Citizen ID
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+                  Mobile Number (Demo OTP Free)
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                    <Phone className="w-4 h-4" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                    <Phone className="w-4 h-4 text-zinc-400" />
                   </div>
                   <input
                     type="tel"
@@ -134,106 +150,131 @@ export default function LoginPage({ onLoginSuccess }) {
                     value={citizenPhone}
                     onChange={(e) => setCitizenPhone(e.target.value)}
                     placeholder="Enter 10-digit mobile number"
-                    className="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 pl-9 pr-3 py-2.5 focus:border-blue-600 focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-md bg-[#0c0c0c] border border-[#333] text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#A31C1B] transition-colors"
                   />
                 </div>
-                <p className="text-[11px] text-slate-500 mt-1">
-                  Demo default pre-filled. No OTP required for prototype evaluation.
-                </p>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 px-4 rounded-lg bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-60"
+                className="w-full py-3 rounded-md bg-[#A31C1B] hover:bg-[#871716] active:bg-[#6d1211] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all disabled:opacity-50"
               >
-                <span>{loading ? 'Entering Portal...' : 'Continue to Citizen Portal'}</span>
+                <span>{loading ? 'Authenticating...' : 'Enter Citizen Portal'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
-
-              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 text-center">
-                <button
-                  type="button"
-                  onClick={() => handleCitizenLogin({ preventDefault: () => {} })}
-                  className="text-xs text-blue-700 dark:text-blue-400 hover:underline font-medium"
-                >
-                  Quick Demo Access: Enter as Ward Resident &rarr;
-                </button>
-              </div>
             </form>
           ) : (
-            /* Administrator Login Flow */
+            /* Administrator / Municipal Officer Flow */
             <form onSubmit={handleAdminLogin} className="space-y-4">
-              <div className="p-3 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300">
-                <span className="font-semibold text-slate-900 dark:text-slate-100 block mb-1">
-                  Municipal Officer Access
+              <div className="p-3.5 rounded-md bg-[#06110C] border border-[#262626] text-xs text-zinc-300">
+                <span className="font-bold text-[#A31C1B] block mb-1 uppercase tracking-wide">
+                  Administrator &amp; Officer Access
                 </span>
-                Officers can inspect prioritized grievance queues, manage issues, view complete audit logs, access advanced analytics, and record mandatory completion summaries with photo proof.
+                Authorized officers can manage reports, inspect audit logs, resolve issues with mandatory completion summaries &amp; photos, and review city-wide analytics.
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  Officer Username
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+                  Username
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                    <User className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    value={adminUsername}
-                    onChange={(e) => setAdminUsername(e.target.value)}
-                    className="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 pl-9 pr-3 py-2.5 focus:border-blue-600 focus:outline-none font-mono"
-                  />
-                </div>
+                <input
+                  type="text"
+                  required
+                  value={adminUsername}
+                  onChange={(e) => setAdminUsername(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-md bg-[#0c0c0c] border border-[#333] text-sm text-white focus:outline-none focus:border-[#A31C1B] transition-colors"
+                />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
                   Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                    <Lock className="w-4 h-4" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+                    <Lock className="w-4 h-4 text-zinc-400" />
                   </div>
                   <input
                     type="password"
                     required
                     value={adminPassword}
                     onChange={(e) => setAdminPassword(e.target.value)}
-                    className="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 pl-9 pr-3 py-2.5 focus:border-blue-600 focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-md bg-[#0c0c0c] border border-[#333] text-sm text-white focus:outline-none focus:border-[#A31C1B] transition-colors"
                   />
                 </div>
-                <p className="text-[11px] text-slate-500 mt-1">
-                  Demo credentials: <code className="font-mono bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">admin</code> / <code className="font-mono bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">admin123</code>
-                </p>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-blue-700 dark:hover:bg-blue-800 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-60"
+                className="w-full py-3 rounded-md bg-[#A31C1B] hover:bg-[#871716] active:bg-[#6d1211] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all disabled:opacity-50"
               >
-                <span>{loading ? 'Authenticating...' : 'Sign In as Administrator'}</span>
+                <span>{loading ? 'Authenticating...' : 'Sign In as Officer'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
-
-              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 text-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAdminUsername('admin');
-                    setAdminPassword('admin123');
-                    handleAdminLogin({ preventDefault: () => {} });
-                  }}
-                  className="text-xs text-blue-700 dark:text-blue-400 hover:underline font-medium"
-                >
-                  Quick Demo Access: Sign In as Duty Officer &rarr;
-                </button>
-              </div>
             </form>
           )}
+
+          {/* Quick Demo Access Bar */}
+          <div className="mt-6 pt-4 border-t border-[#242424] flex items-center justify-between text-[11px] text-zinc-400">
+            <span>Demo Mode Active</span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveRoleTab('citizen');
+                  onLoginSuccess({
+                    role: 'citizen',
+                    phone: '9845112233',
+                    name: 'Citizen Demo (Bengaluru)',
+                    token: 'demo-citizen-token'
+                  });
+                }}
+                className="text-[#A31C1B] hover:underline font-bold"
+              >
+                Instant Citizen
+              </button>
+              <span>|</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveRoleTab('admin');
+                  onLoginSuccess({
+                    role: 'admin',
+                    username: 'admin',
+                    name: 'Officer Sharma (BBMP)',
+                    department: 'Public Works',
+                    token: 'demo-admin-token'
+                  });
+                }}
+                className="text-[#A31C1B] hover:underline font-bold"
+              >
+                Instant Admin
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Looping Marquee of Civic Departments */}
+      <div className="w-full max-w-4xl mt-10">
+        <div className="text-center mb-3">
+          <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-zinc-400">
+            Direct Routing to Partner Municipal Agencies
+          </span>
+        </div>
+        <div style={{ height: '48px', position: 'relative', overflow: 'hidden' }}>
+          <LogoLoop
+            logos={partnerAgencies}
+            speed={45}
+            direction="left"
+            logoHeight={34}
+            gap={32}
+            hoverSpeed={15}
+            scaleOnHover={true}
+            ariaLabel="Partner Municipal Departments"
+          />
         </div>
       </div>
     </div>

@@ -1,13 +1,15 @@
 /**
  * CivicLens Citizen Complaint Intake Form
  * Multilingual complaint submission, client-side photo validation,
- * geolocation detection, and immediate triage confirmation.
+ * geolocation detection, and immediate AI triage confirmation.
+ * Follows Charcoal Black (#171717), Forest Green (#06110C), and Crimson Red (#A31C1B) palette.
  */
 
 import React, { useState, useEffect } from 'react';
 import { submitComplaint } from '../services/api';
 import SeverityBadge from './SeverityBadge';
 import { Camera, MapPin, AlertCircle, CheckCircle2, RefreshCw, Copy, Check, ArrowRight, X } from './Icons';
+import LogoLoop from './reactbits/LogoLoop';
 
 export default function ComplaintForm({ onTrackTicket }) {
   const [text, setText] = useState('');
@@ -77,16 +79,16 @@ export default function ComplaintForm({ onTrackTicket }) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setCoords({
-          lat: parseFloat(pos.coords.latitude.toFixed(6)),
-          lon: parseFloat(pos.coords.longitude.toFixed(6)),
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude
         });
         setGeoLoading(false);
       },
       (err) => {
         setGeoLoading(false);
-        setClientError('Unable to retrieve GPS coordinates. Please type the location manually.');
+        setClientError(`Failed to fetch location: ${err.message}. Please enter landmark text manually.`);
       },
-      { timeout: 10000, enableHighAccuracy: true }
+      { timeout: 10000 }
     );
   };
 
@@ -94,26 +96,24 @@ export default function ComplaintForm({ onTrackTicket }) {
     e.preventDefault();
     setClientError(null);
 
-    // Validation: At least one of text or photo required
-    const cleanText = text.trim();
-    if (!cleanText && !photo) {
-      setClientError('Please provide a complaint description or attach a photograph.');
+    // Business validation: At least one of text or photo is required
+    if (!text.trim() && !photo) {
+      setClientError('Please provide a complaint description, a photo, or both.');
       return;
     }
 
     setLoading(true);
     try {
-      const formData = new FormData();
-      if (cleanText) formData.append('raw_text', cleanText);
-      if (locationText.trim()) formData.append('location_text', locationText.trim());
-      if (coords.lat !== null) formData.append('latitude', coords.lat.toString());
-      if (coords.lon !== null) formData.append('longitude', coords.lon.toString());
-      if (contactNumber.trim()) formData.append('contact_number', contactNumber.trim());
-      if (photo) formData.append('photo', photo);
-
-      const result = await submitComplaint(formData);
-      setSuccessResult(result);
-      // Reset form fields
+      const data = await submitComplaint({
+        text: text.trim(),
+        photo,
+        locationText: locationText.trim(),
+        latitude: coords.lat,
+        longitude: coords.lon,
+        contactNumber: contactNumber.trim()
+      });
+      setSuccessResult(data);
+      // Reset form
       setText('');
       setPhoto(null);
       setPhotoPreview(null);
@@ -121,7 +121,7 @@ export default function ComplaintForm({ onTrackTicket }) {
       setCoords({ lat: null, lon: null });
       setContactNumber('');
     } catch (err) {
-      setClientError(err.message || 'An error occurred while submitting your grievance.');
+      setClientError(err.message || 'Failed to submit complaint. Please check connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -135,12 +135,22 @@ export default function ComplaintForm({ onTrackTicket }) {
     }
   };
 
+  // Municipal department loop
+  const partnerAgencies = [
+    { title: "BBMP Roads", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">BBMP Road Infrastructure</span> },
+    { title: "BWSSB Water", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">BWSSB Water &amp; Drainage</span> },
+    { title: "BESCOM Power", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">BESCOM Power Grid</span> },
+    { title: "Fire Force", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">State Fire &amp; Emergency</span> },
+    { title: "Waste Mgmt", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">Solid Waste Directorate</span> },
+    { title: "Traffic", node: <span className="px-3 py-1 rounded bg-[#171717] border border-[#2a2a2a] text-[11px] font-bold text-zinc-300 uppercase tracking-wider">Traffic Safety Command</span> },
+  ];
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       {/* Offline Alert Banner */}
       {isOffline && (
-        <div className="mb-6 p-4 rounded-lg bg-amber-50 text-amber-900 border border-amber-300 dark:bg-amber-950 dark:text-amber-200 dark:border-amber-700 flex items-center gap-3">
-          <AlertCircle className="w-5 h-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
+        <div className="mb-6 p-4 rounded-md bg-[#2d1b10] text-amber-200 border border-amber-800 flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 flex-shrink-0 text-amber-400" />
           <p className="text-sm font-medium">
             You appear to be offline. Please verify your internet connection before submitting.
           </p>
@@ -149,156 +159,153 @@ export default function ComplaintForm({ onTrackTicket }) {
 
       {/* Success Confirmation Card */}
       {successResult && (
-        <div className="mb-8 p-6 rounded-lg bg-emerald-50 border border-emerald-300 dark:bg-emerald-950/70 dark:border-emerald-800 text-slate-900 dark:text-slate-100">
+        <div className="mb-8 p-6 rounded-xl bg-[#171717] border border-[#A31C1B]/60 text-white shadow-2xl">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-lg bg-[#A31C1B] text-white flex items-center justify-center font-bold shadow-md">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-emerald-950 dark:text-emerald-100">
+                <h2 className="text-lg font-black uppercase tracking-tight text-white">
                   Grievance Registered Successfully
                 </h2>
-                <p className="text-xs text-emerald-800 dark:text-emerald-300">
+                <p className="text-xs text-zinc-400">
                   Automated triage complete. Your complaint has been routed to the relevant municipal department.
                 </p>
               </div>
             </div>
             <button
               onClick={() => setSuccessResult(null)}
-              className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+              className="text-zinc-400 hover:text-white"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-white dark:bg-slate-900 p-4 rounded-lg border border-emerald-200 dark:border-emerald-900">
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-[#0c0c0c] p-4 rounded-lg border border-[#242424]">
             <div>
-              <span className="text-xs text-slate-500 dark:text-slate-400">Ticket Reference ID:</span>
+              <span className="text-xs text-zinc-400">Ticket Reference ID:</span>
               <div className="flex items-center gap-2 mt-1">
-                <span className="font-mono font-bold text-base text-blue-700 dark:text-blue-300">
+                <span className="font-mono font-bold text-base text-[#A31C1B]">
                   {successResult.id}
                 </span>
                 <button
                   onClick={handleCopyId}
-                  className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"
+                  className="p-1 rounded hover:bg-[#222] text-zinc-400"
                   title="Copy Ticket ID"
                 >
-                  {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
             <div>
-              <span className="text-xs text-slate-500 dark:text-slate-400">Assigned Priority:</span>
+              <span className="text-xs text-zinc-400">Assigned Priority:</span>
               <div className="mt-1">
                 <SeverityBadge severity={successResult.severity} />
               </div>
             </div>
 
             <div>
-              <span className="text-xs text-slate-500 dark:text-slate-400">Detected Category:</span>
-              <p className="font-medium capitalize text-slate-800 dark:text-slate-200 mt-0.5">
+              <span className="text-xs text-zinc-400">Detected Category:</span>
+              <p className="font-bold capitalize text-white mt-0.5">
                 {successResult.category}
               </p>
             </div>
 
             <div>
-              <span className="text-xs text-slate-500 dark:text-slate-400">Routed Department:</span>
-              <p className="font-medium text-slate-800 dark:text-slate-200 mt-0.5">
+              <span className="text-xs text-zinc-400">Routed Department:</span>
+              <p className="font-bold text-white mt-0.5">
                 {successResult.primary_department}
               </p>
             </div>
 
             {successResult.detected_language && successResult.detected_language !== 'English' && (
-              <div className="sm:col-span-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <span className="text-xs text-slate-500 dark:text-slate-400">
+              <div className="sm:col-span-2 pt-2 border-t border-[#242424]">
+                <span className="text-xs text-zinc-400">
                   Input Language ({successResult.detected_language}) Translated to English:
                 </span>
-                <p className="text-xs italic text-slate-700 dark:text-slate-300 mt-0.5">
+                <p className="text-xs italic text-zinc-300 mt-0.5">
                   "{successResult.translated_text}"
                 </p>
               </div>
             )}
+
+            {successResult.confidence_flag && (
+              <div className="sm:col-span-2 p-2.5 rounded bg-[#241a10] border border-amber-900/60 text-xs text-amber-300 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                <span>Ticket flagged for officer manual inspection: low AI confidence or multi-modal review recommended.</span>
+              </div>
+            )}
           </div>
 
-          <div className="mt-5 flex items-center justify-between">
+          <div className="mt-4 flex justify-end gap-3">
             <button
               onClick={() => onTrackTicket && onTrackTicket(successResult.id)}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-700 text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-[#A31C1B] hover:bg-[#871716] text-white text-xs font-bold uppercase tracking-wider transition-colors"
             >
-              <span>Track Ticket Live</span>
+              <span>Track Live Status</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setSuccessResult(null)}
-              className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
-            >
-              Submit another complaint
             </button>
           </div>
         </div>
       )}
 
-      {/* Main Form Card */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm p-6 sm:p-8">
-        <div className="mb-6">
-          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Register a Civic Complaint
+      {/* Main Intake Form Card */}
+      <div className="bg-[#171717] rounded-xl border border-[#2a2a2a] shadow-xl overflow-hidden">
+        <div className="p-6 border-b border-[#242424]">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-[#A31C1B]" />
+            <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-[#A31C1B]">
+              PUBLIC GRIEVANCE INTAKE
+            </span>
+          </div>
+          <h1 className="text-xl font-black uppercase tracking-tight text-white">
+            Lodge a Municipal Grievance
           </h1>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-            Report road hazards, garbage, drainage issues, water supply failures, or electrical faults in any language.
+          <p className="text-xs text-zinc-400 mt-1">
+            Report road hazards, water leaks, garbage, fallen trees, or power failures. Submit in English or regional languages.
           </p>
         </div>
 
-        {clientError && (
-          <div className="mb-6 p-4 rounded-lg bg-red-50 text-red-900 border border-red-300 dark:bg-red-950/70 dark:text-red-200 dark:border-red-800 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600 dark:text-red-400 mt-0.5" />
-            <div className="text-sm">
-              <p className="font-semibold">Submission Error</p>
-              <p className="mt-0.5">{clientError}</p>
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {clientError && (
+            <div className="p-3.5 rounded-md bg-[#241212] border border-red-900 text-red-200 text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-[#A31C1B] flex-shrink-0" />
+              <span>{clientError}</span>
             </div>
-          </div>
-        )}
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Complaint Description Input */}
+          {/* Multilingual Description */}
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label htmlFor="raw_text" className="block text-sm font-medium text-slate-900 dark:text-slate-100">
-                Complaint Description
-              </label>
-              <span className="text-xs text-blue-700 dark:text-blue-400 font-medium">
-                English, Hindi, Kannada, Tamil, Telugu, Marathi, Bengali, or Hinglish
-              </span>
-            </div>
+            <label htmlFor="complaint-text" className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+              Issue Description (English, Hindi, Kannada, Tamil, Telugu, etc.)
+            </label>
             <textarea
-              id="raw_text"
+              id="complaint-text"
               rows={4}
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Describe the issue in your own words (e.g., 'ರಸ್ತೆಯಲ್ಲಿ ದೊಡ್ಡ ಗುಂಡಿ ಬಿದ್ದಿದೆ' or 'Main road pe khadda hai aur paani beh raha hai')..."
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              placeholder="Describe the problem in any Indian language. Example: 'Main road pe khadda hai bahut bada' or 'ಕಸದ ತೊಟ್ಟಿ ತುಂಬಿ ರಸ್ತೆಗೆ ಚೆಲ್ಲಿದೆ' or 'Street light broken near school'."
+              className="w-full px-3.5 py-2.5 rounded-md bg-[#0c0c0c] border border-[#333] text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#A31C1B] transition-colors resize-none"
             />
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              At least one of complaint text or an attached photo is required.
-            </p>
+            <div className="flex justify-between items-center mt-1 text-[11px] text-zinc-500">
+              <span>Automatic language detection &amp; translation</span>
+              <span>{text.length} characters</span>
+            </div>
           </div>
 
-          {/* Photo Upload Input */}
+          {/* Photo Upload */}
           <div>
-            <label className="block text-sm font-medium text-slate-900 dark:text-slate-100 mb-2">
-              On-Site Photograph (Optional, max 5 MB)
+            <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+              Photo Upload (Optional, JPEG / PNG up to 5 MB)
             </label>
+            
             {!photoPreview ? (
-              <label className="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-5 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <Camera className="w-8 h-8 text-slate-400 mb-2" />
-                <span className="text-sm font-medium text-blue-700 dark:text-blue-400">
-                  Upload an image or take a photo
-                </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  JPEG or PNG up to 5 MB. Server re-encodes photos to strip metadata safely.
-                </span>
+              <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#333] hover:border-[#A31C1B] rounded-lg p-6 cursor-pointer bg-[#0c0c0c] transition-colors">
+                <Camera className="w-8 h-8 text-zinc-500 mb-2" />
+                <span className="text-xs font-semibold text-zinc-300">Click to upload photo of issue</span>
+                <span className="text-[11px] text-zinc-500 mt-0.5">JPEG, PNG or WebP &bull; Maximum 5 MB</span>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
@@ -307,17 +314,17 @@ export default function ComplaintForm({ onTrackTicket }) {
                 />
               </label>
             ) : (
-              <div className="relative inline-block border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+              <div className="relative inline-block border border-[#333] rounded-lg overflow-hidden bg-[#0c0c0c]">
                 <img
                   src={photoPreview}
-                  alt="Complaint Preview"
-                  className="h-44 w-auto object-cover rounded-lg"
+                  alt="Upload preview"
+                  className="h-44 w-auto object-cover max-w-full"
                 />
                 <button
                   type="button"
                   onClick={removePhoto}
-                  className="absolute top-2 right-2 p-1.5 rounded-md bg-slate-900/80 text-white hover:bg-red-600 transition-colors"
-                  title="Remove photograph"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-black/80 hover:bg-[#A31C1B] text-white transition-colors"
+                  title="Remove photo"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -327,83 +334,107 @@ export default function ComplaintForm({ onTrackTicket }) {
 
           {/* Location Details */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="sm:col-span-2">
-              <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="location_text" className="block text-sm font-medium text-slate-900 dark:text-slate-100">
-                  Location or Landmark (Optional)
-                </label>
+            <div>
+              <label htmlFor="location-text" className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+                Location or Landmark (Optional)
+              </label>
+              <input
+                id="location-text"
+                type="text"
+                value={locationText}
+                onChange={(e) => setLocationText(e.target.value)}
+                placeholder="e.g. 5th Cross, Near Metro Station, Indiranagar"
+                className="w-full px-3.5 py-2.5 rounded-md bg-[#0c0c0c] border border-[#333] text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#A31C1B] transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+                Map Coordinates
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={coords.lat ? `${coords.lat.toFixed(4)}, ${coords.lon.toFixed(4)}` : 'Coordinates not attached'}
+                  className="w-full px-3 py-2.5 rounded-md bg-[#0c0c0c] border border-[#333] text-xs font-mono text-zinc-400 focus:outline-none"
+                />
                 <button
                   type="button"
                   onClick={handleGetLocation}
                   disabled={geoLoading}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline"
+                  className="px-3 py-2.5 rounded-md border border-[#333] hover:border-[#A31C1B] bg-[#0c0c0c] text-xs font-semibold text-zinc-300 hover:text-white flex items-center gap-1.5 whitespace-nowrap transition-colors"
                 >
-                  <MapPin className="w-3.5 h-3.5" />
-                  {geoLoading ? 'Detecting GPS...' : 'Use Current GPS'}
+                  {geoLoading ? (
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <MapPin className="w-3.5 h-3.5 text-[#A31C1B]" />
+                  )}
+                  <span>Detect</span>
                 </button>
               </div>
-              <input
-                id="location_text"
-                type="text"
-                value={locationText}
-                onChange={(e) => setLocationText(e.target.value)}
-                placeholder="e.g. 100 Feet Road, opposite Indiranagar Metro Station"
-                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
-              />
             </div>
-
-            {coords.lat !== null && (
-              <div className="sm:col-span-2 p-2.5 rounded bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900 text-xs text-blue-900 dark:text-blue-200 flex items-center justify-between">
-                <span>
-                  GPS Coordinates Attached: {coords.lat}, {coords.lon}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setCoords({ lat: null, lon: null })}
-                  className="text-blue-700 hover:underline"
-                >
-                  Clear GPS
-                </button>
-              </div>
-            )}
           </div>
 
-          {/* Contact Number */}
+          {/* Contact Information (Sanitized & Never sent to LLM) */}
           <div>
-            <label htmlFor="contact_number" className="block text-sm font-medium text-slate-900 dark:text-slate-100 mb-1.5">
-              Citizen Contact Number (Optional)
+            <label htmlFor="contact-num" className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+              Contact Number (Optional &bull; Kept Strictly Private)
             </label>
             <input
-              id="contact_number"
+              id="contact-num"
               type="tel"
               value={contactNumber}
               onChange={(e) => setContactNumber(e.target.value)}
-              placeholder="+91 9876543210"
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              placeholder="10-digit mobile number for status SMS"
+              className="w-full px-3.5 py-2.5 rounded-md bg-[#0c0c0c] border border-[#333] text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#A31C1B] transition-colors max-w-sm"
             />
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Protected by privacy controls. Contact details are never sent to external AI models.
+            <p className="text-[11px] text-zinc-500 mt-1">
+              Safety notice: Contact numbers are never forwarded to AI inference models.
             </p>
           </div>
 
-          {/* Submit Action */}
-          <div>
+          {/* Submit Button */}
+          <div className="pt-2">
             <button
               type="submit"
-              disabled={loading || isOffline}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60 transition-colors"
+              disabled={loading}
+              className="w-full py-3.5 px-6 rounded-md bg-[#A31C1B] hover:bg-[#871716] active:bg-[#6d1211] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all disabled:opacity-50"
             >
               {loading ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Analyzing & Classifying Grievance...</span>
+                  <span>Classifying &amp; Prioritizing Grievance...</span>
                 </>
               ) : (
-                <span>Submit Grievance</span>
+                <>
+                  <span>Submit Grievance For Triage</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
               )}
             </button>
           </div>
         </form>
+      </div>
+
+      {/* Looping Marquee */}
+      <div className="mt-8">
+        <div className="text-center mb-2.5">
+          <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-zinc-500">
+            Triage &bull; Routing to 7 Civic Jurisdictions
+          </span>
+        </div>
+        <div style={{ height: '38px', position: 'relative', overflow: 'hidden' }}>
+          <LogoLoop
+            logos={partnerAgencies}
+            speed={40}
+            direction="left"
+            logoHeight={28}
+            gap={24}
+            hoverSpeed={10}
+            ariaLabel="Partner Civic Jurisdictions"
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 /**
  * CivicLens Navigation Bar
  * Responsive role-aware top bar with distinct navigation for Administrators and Citizens,
- * session indicator, role switcher, and dark mode toggle.
+ * session indicator, role switcher, StaggeredMenu trigger, and dark mode toggle.
+ * Follows editorial Charcoal Black (#171717), Forest Green (#06110C), and Crimson Red (#A31C1B).
  */
 
 import React from 'react';
@@ -17,7 +18,8 @@ import {
   ShieldCheck, 
   User, 
   LogOut,
-  AlertTriangle 
+  AlertTriangle,
+  Menu
 } from './Icons';
 
 export default function Navbar({ 
@@ -26,7 +28,8 @@ export default function Navbar({
   setActiveTab, 
   darkMode, 
   setDarkMode, 
-  onSignOut 
+  onSignOut,
+  onOpenStaggeredMenu
 }) {
   // Navigation tabs configured strictly by authenticated role
   const citizenNav = [
@@ -46,7 +49,7 @@ export default function Navbar({
   const currentNav = currentUser?.role === 'admin' ? adminNav : citizenNav;
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-800 backdrop-blur">
+    <header className="sticky top-0 z-40 bg-[#171717]/95 border-b border-[#262626] backdrop-blur shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo & Name */}
@@ -59,25 +62,30 @@ export default function Navbar({
                   setActiveTab('intake');
                 }
               }}
-              className="flex items-center gap-2.5 text-left focus:outline-none"
+              className="flex items-center gap-2.5 text-left focus:outline-none group"
             >
-              <div className="w-9 h-9 rounded-lg bg-blue-700 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+              <div className="w-9 h-9 rounded-md bg-[#A31C1B] text-white flex items-center justify-center font-bold text-lg shadow-sm transition-transform group-hover:scale-105">
                 <ShieldAlert className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
-                  {APP_NAME}
-                </span>
-                <span className="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">
-                  {currentUser?.role === 'admin' ? 'Officer Portal' : 'Citizen Portal'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-black tracking-tight text-white uppercase">
+                    {APP_NAME}
+                  </span>
+                  <span className="text-[10px] uppercase font-mono font-bold px-1.5 py-0.5 rounded bg-[#06110C] text-[#A31C1B] border border-[#A31C1B]/40">
+                    AI Triage
+                  </span>
+                </div>
+                <div className="text-[10px] text-zinc-400 font-medium">
+                  {currentUser?.role === 'admin' ? 'Municipal Officer Console' : 'Citizen Grievance Portal'}
+                </div>
               </div>
             </button>
           </div>
 
           {/* Role Navigation Items */}
           {currentUser && (
-            <nav className="flex items-center gap-1 sm:gap-2">
+            <nav className="hidden md:flex items-center gap-1">
               {currentNav.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
@@ -85,39 +93,52 @@ export default function Navbar({
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`flex items-center gap-2 px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-md transition-all ${
                       isActive
-                        ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 font-semibold'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800'
+                        ? 'bg-[#A31C1B] text-white shadow-sm'
+                        : 'text-zinc-300 hover:text-white hover:bg-[#242424]'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
-                    <span className="hidden md:inline">{item.label}</span>
+                    <span>{item.label}</span>
                   </button>
                 );
               })}
             </nav>
           )}
 
-          {/* Right Action Area: User Session, Sign Out & Theme */}
-          <div className="flex items-center gap-2">
+          {/* Right Action Area: User Session, StaggeredMenu Trigger, Role Switch & Theme */}
+          <div className="flex items-center gap-2 sm:gap-3">
             {currentUser && (
-              <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs">
+              <div className="hidden lg:flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-[#06110C] border border-[#262626] text-xs">
                 {currentUser.role === 'admin' ? (
-                  <ShieldAlert className="w-3.5 h-3.5 text-blue-700 dark:text-blue-400" />
+                  <ShieldAlert className="w-3.5 h-3.5 text-[#A31C1B]" />
                 ) : (
-                  <User className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <User className="w-3.5 h-3.5 text-emerald-400" />
                 )}
-                <span className="font-medium text-slate-700 dark:text-slate-300 max-w-[130px] truncate">
+                <span className="font-medium text-zinc-200 max-w-[130px] truncate">
                   {currentUser.name}
+                </span>
+                <span className="text-[9px] uppercase font-mono px-1 py-0.2 rounded bg-[#171717] text-zinc-400 border border-[#2a2a2a]">
+                  {currentUser.role}
                 </span>
               </div>
             )}
 
+            {/* Staggered Menu / Option Wheel Trigger Button */}
+            <button
+              onClick={onOpenStaggeredMenu}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#06110C] hover:bg-[#202020] border border-[#A31C1B]/50 text-xs font-bold text-white transition-all shadow-sm"
+              title="Open Navigation Menu & Option Wheel"
+            >
+              <Menu className="w-3.5 h-3.5 text-[#A31C1B]" />
+              <span className="tracking-wide uppercase text-[11px]">Wheel Menu</span>
+            </button>
+
             {currentUser && onSignOut && (
               <button
                 onClick={onSignOut}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-[#2e2e2e] text-xs font-medium text-zinc-300 hover:text-white hover:bg-[#242424] transition-colors"
                 title="Sign out and switch role"
               >
                 <LogOut className="w-3.5 h-3.5" />
@@ -128,11 +149,11 @@ export default function Navbar({
             {/* Dark Mode Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
+              className="p-2 rounded-md text-zinc-400 hover:text-white hover:bg-[#242424] transition-colors"
               aria-label="Toggle dark mode"
               title="Toggle dark mode"
             >
-              {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+              {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-zinc-300" />}
             </button>
           </div>
         </div>

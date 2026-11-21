@@ -1,10 +1,11 @@
 /**
  * CivicLens Main Application Root
- * Role-Based Access Control for Administrators (Municipal Officers) and Citizens,
- * theme management, verified work resolution workflows, and civic governance compliance.
+ * Role-Based Access Control for Administrators (Municipal Officers) and Citizens.
+ * Theme follows reference styling: Charcoal Black (#171717), Forest Green (#06110C), Crimson Red (#A31C1B).
+ * Integrates StaggeredMenu with embedded OptionWheel and RotatingText.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
 import LoginPage from './components/LoginPage';
 import ComplaintForm from './components/ComplaintForm';
@@ -16,6 +17,8 @@ import AnalyticsView from './components/AnalyticsView';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsConditions from './components/TermsConditions';
 import TicketDetailModal from './components/TicketDetailModal';
+import StaggeredMenu from './components/reactbits/StaggeredMenu';
+import RotatingText from './components/reactbits/RotatingText';
 import { APP_NAME } from './config';
 
 export default function App() {
@@ -44,11 +47,11 @@ export default function App() {
   const [trackedTicketId, setTrackedTicketId] = useState(null);
   const [selectedTicketModalId, setSelectedTicketModalId] = useState(null);
 
-  // Initialize Dark Mode from localStorage or system preference
+  // Initialize Dark Mode by default to match editorial theme
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('civiclens_theme');
     if (saved) return saved === 'dark';
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return true; // Default to rich dark mode matching the editorial image
   });
 
   useEffect(() => {
@@ -88,8 +91,70 @@ export default function App() {
     }
   };
 
+  // Navigation mappings for StaggeredMenu and OptionWheel
+  const citizenWheelItems = [
+    'Report an Issue',
+    'Track Report',
+    'Civic Analysis',
+    'Privacy Policy',
+    'Terms of Service'
+  ];
+  const citizenTabMap = ['intake', 'track', 'analysis', 'privacy', 'terms'];
+
+  const adminWheelItems = [
+    'Reports Queue',
+    'Active Issues',
+    'Audit Logs',
+    'Civic Analysis',
+    'Tracking Dossier'
+  ];
+  const adminTabMap = ['reports', 'issues', 'logs', 'analysis', 'tracking'];
+
+  const activeWheelItems = currentUser?.role === 'admin' ? adminWheelItems : citizenWheelItems;
+  const activeTabMap = currentUser?.role === 'admin' ? adminTabMap : citizenTabMap;
+  const wheelIndex = Math.max(0, activeTabMap.indexOf(activeTab));
+
+  const staggeredMenuItems = activeWheelItems.map((label, idx) => ({
+    label,
+    link: '#',
+    onClick: () => {
+      setActiveTab(activeTabMap[idx]);
+    }
+  }));
+
+  const handleWheelSelect = (idx) => {
+    if (activeTabMap[idx]) {
+      setActiveTab(activeTabMap[idx]);
+    }
+  };
+
+  const staggeredMenuRef = useRef(null);
+  const handleOpenStaggeredMenu = () => {
+    // Trigger click on StaggeredMenu toggle button
+    const toggleBtn = document.querySelector('.sm-toggle');
+    if (toggleBtn) {
+      toggleBtn.click();
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors">
+    <div className="min-h-screen flex flex-col bg-[#06110C] text-[#f4f4f5] transition-colors selection:bg-[#A31C1B] selection:text-white">
+      {/* Staggered Navigation Menu with OptionWheel presented on open */}
+      <StaggeredMenu
+        isFixed={true}
+        position="right"
+        colors={['#06110C', '#171717', '#A31C1B']}
+        accentColor="#A31C1B"
+        menuButtonColor="#ffffff"
+        openMenuButtonColor="#A31C1B"
+        brandTitle={APP_NAME}
+        items={staggeredMenuItems}
+        showWheel={true}
+        wheelItems={activeWheelItems}
+        wheelSelectedIndex={wheelIndex >= 0 ? wheelIndex : 0}
+        onWheelChange={handleWheelSelect}
+      />
+
       {/* Navigation Header */}
       <Navbar
         currentUser={currentUser}
@@ -98,7 +163,49 @@ export default function App() {
         darkMode={darkMode}
         setDarkMode={setDarkMode}
         onSignOut={currentUser ? handleSignOut : null}
+        onOpenStaggeredMenu={handleOpenStaggeredMenu}
       />
+
+      {/* High-Impact Editorial Hero Announcement Banner with RotatingText */}
+      <div className="bg-[#171717] border-b border-[#242424] px-4 py-2.5 text-xs">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <span className="w-2 h-2 rounded-full bg-[#A31C1B] animate-pulse" />
+            <span className="font-extrabold tracking-wider text-white uppercase text-[11px]">
+              CIVIC INTELLIGENCE
+            </span>
+            <span className="text-zinc-600 hidden sm:inline">&bull;</span>
+            <div className="inline-flex items-center">
+              <RotatingText
+                texts={[
+                  'SAFETY-CRITICAL FIRST',
+                  'INSTANT MUNICIPAL ROUTING',
+                  '100% IMMUTABLE AUDIT TRAIL',
+                  'REGIONAL LANGUAGE AI'
+                ]}
+                mainClassName="px-2.5 py-0.5 rounded bg-[#A31C1B] text-white font-black text-[11px] uppercase tracking-wide shadow-sm"
+                staggerFrom="last"
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "-120%" }}
+                staggerDuration={0.025}
+                splitLevelClassName="overflow-hidden"
+                transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                rotationInterval={3500}
+              />
+            </div>
+            <span className="text-zinc-400 text-[11px] hidden lg:inline">
+              Automated multi-lingual civic triage &amp; lifecycle verification
+            </span>
+          </div>
+
+          <div className="hidden md:flex items-center gap-3 text-[11px] font-mono text-zinc-400">
+            <span className="text-[#A31C1B] font-bold tracking-wider">BUILT DIFFERENTLY</span>
+            <span>&bull;</span>
+            <span className="text-zinc-500">CHARCOAL #171717 / FOREST #06110C / CRIMSON #A31C1B</span>
+          </div>
+        </div>
+      </div>
 
       {/* Main Content View Switcher */}
       <main className="flex-1">
@@ -166,14 +273,14 @@ export default function App() {
       )}
 
       {/* Municipal Civic Footer */}
-      <footer className="py-6 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 bg-white/50 dark:bg-slate-900/50">
+      <footer className="py-6 border-t border-[#1f1f1f] text-xs text-zinc-400 bg-[#06110C]/90">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
-            <span className="font-semibold text-slate-700 dark:text-slate-300">
-              {APP_NAME} &bull; Municipal AI Triage &amp; Prioritization System
+            <span className="font-bold text-white uppercase tracking-wider">
+              {APP_NAME} &bull; MUNICIPAL AI GRIEVANCE SYSTEM
             </span>
-            <span className="hidden sm:inline text-slate-300 dark:text-slate-700">|</span>
-            <span className="text-[11px] text-slate-400 dark:text-slate-500">
+            <span className="hidden sm:inline text-zinc-700">|</span>
+            <span className="text-[11px] text-zinc-400">
               Zero PII forward to LLM &bull; WCAG AA Compliant &bull; Multilingual
             </span>
           </div>
@@ -181,21 +288,21 @@ export default function App() {
           <div className="flex items-center gap-4 text-[11px]">
             <button
               onClick={() => setActiveTab('privacy')}
-              className="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-400 hover:underline"
+              className="text-zinc-400 hover:text-[#A31C1B] transition-colors hover:underline"
             >
               Privacy Policy
             </button>
-            <span className="text-slate-300 dark:text-slate-700">&bull;</span>
+            <span className="text-zinc-700">&bull;</span>
             <button
               onClick={() => setActiveTab('terms')}
-              className="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-400 hover:underline"
+              className="text-zinc-400 hover:text-[#A31C1B] transition-colors hover:underline"
             >
               Terms &amp; Conditions
             </button>
-            <span className="text-slate-300 dark:text-slate-700">&bull;</span>
+            <span className="text-zinc-700">&bull;</span>
             <button
               onClick={handleSignOut}
-              className="text-blue-700 dark:text-blue-400 font-medium hover:underline"
+              className="text-[#A31C1B] font-bold hover:underline"
             >
               {currentUser ? `Sign Out (${currentUser.role})` : 'Role Sign In'}
             </button>
