@@ -1,0 +1,8 @@
+{
+  "name": "prompt-to-product-techhabba",
+  "private": true,
+  "scripts": {
+    "install": "npm --prefix frontend install",
+    "build": "npm --prefix frontend run build"
+  }
+}

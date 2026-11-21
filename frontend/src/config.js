@@ -4,7 +4,10 @@
  */
 
 export const APP_NAME = "CivicLens";
-export const API_BASE = "/api";
+const configuredApiBase = import.meta.env.VITE_API_BASE_URL?.trim();
+export const API_BASE = configuredApiBase
+  ? configuredApiBase.replace(/\/$/, "")
+  : "/api";
 
 export const ALLOWED_CATEGORIES = [
   "roads",
