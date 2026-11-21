@@ -14,6 +14,7 @@ from models import Ticket
 from schemas import TicketRead
 from services.image_processor import sanitize_and_save_image
 from services.rate_limiter import limiter
+from services.ai_classifier import classify_complaint
 from config import DEPARTMENTS, ALLOWED_CATEGORIES, ALLOWED_SEVERITIES
 
 router = APIRouter(prefix="/api/complaints", tags=["Complaints"])
@@ -74,32 +75,38 @@ async def submit_complaint(
     # 4. Generate unique Ticket ID
     ticket_id = generate_ticket_id()
 
-    # Initial default routing (augmented in Phase 2 with Gemini & fallback)
-    default_category = "other"
-    dept_info = DEPARTMENTS.get(default_category, {})
+    # 5. Run AI Classification & Safety Triage Pipeline
+    ai_output, method, needs_review, review_reason = classify_complaint(
+        raw_text=clean_text,
+        photo_path=photo_path
+    )
+
+    # 6. Department Routing from editable config table
+    dept_info = DEPARTMENTS.get(ai_output.category, {})
     primary_dept = dept_info.get("primary_department", "Municipal Grievance Cell")
-    secondary_dept = dept_info.get("secondary_department")
+    secondary_dept = ai_output.secondary_department or dept_info.get("secondary_department")
 
     ticket = Ticket(
         id=ticket_id,
         raw_text=clean_text,
-        detected_language="English",
-        translated_text=clean_text,
+        detected_language=ai_output.detected_language,
+        translated_text=ai_output.translated_text,
         has_photo=has_photo,
         photo_path=photo_path,
         location_text=location_text.strip() if location_text else None,
         latitude=latitude,
         longitude=longitude,
         contact_number=contact_number.strip() if contact_number else None,
-        category=default_category,
-        severity="Medium",
-        severity_reason="Default intake triage pending automated AI evaluation.",
+        category=ai_output.category,
+        severity=ai_output.severity,
+        severity_reason=ai_output.severity_reason,
         primary_department=primary_dept,
         secondary_department=secondary_dept,
         status="new",
-        confidence_score=1.0,
-        needs_review=False,
-        ai_classification_method="intake_pipeline",
+        confidence_score=ai_output.confidence_score,
+        needs_review=needs_review,
+        review_reason=review_reason,
+        ai_classification_method=method,
         is_duplicate=False,
         duplicate_count=0
     )

@@ -4,6 +4,23 @@ This log documents every major prompt, AI tool interaction, architectural decisi
 
 ---
 
+## Log Entry 3: Multimodal Gemini AI, Safety Rubric, Injection Defense & Fallback
+- **Timestamp**: 2026-11-21 10:58 IST
+- **Phase**: Phase 2 (AI Classification, Rubric, and Fallback Engine)
+- **Tool**: Google Antigravity (Gemini 3.8 Flash)
+- **Prompt Summary**:
+  Design versioned system prompt (`classifier_v1.py`) with canonical category schema, safety-first severity rubric, strict JSON output structure, prompt injection boundary defenses, and multilingual translation support. Implement `ai_classifier.py` with multimodal image reading and single-attempt retry. Construct deterministic rule-based fallback classifier (`fallback_classifier.py`) spanning English, Hindi, Kannada, Tamil, Telugu, and Hinglish. Wire intake endpoint to automated classification.
+- **Artifacts Produced**:
+  - `backend/prompts/classifier_v1.py` (versioned prompt template, delimited user block, strict JSON schema instructions)
+  - `backend/services/fallback_classifier.py` (deterministic regex and keyword classifier across 10 categories and 4 severities)
+  - `backend/services/ai_classifier.py` (Gemini API integration with schema validation, retry mechanism, multimodal support, and graceful fallback)
+  - `backend/routes/complaints.py` (updated intake endpoint executing automated classification and dynamic department routing)
+  - `backend/tests/test_rubric.py` (unit tests verifying category limits, department completeness, and safety priority logic)
+  - `backend/tests/test_validation.py` (unit tests verifying Pydantic validation, injection delimitation, and crash resilience)
+- **Verification**:
+  - Ran `pytest backend/tests/ -v`: 23 of 23 unit tests passed with 100% success.
+
+
 ## Log Entry 2: Backend Skeleton, Data Models & Complaint Intake Pipeline
 - **Timestamp**: 2026-11-21 10:54 IST
 - **Phase**: Phase 1 (Backend Skeleton & Complaint Intake)
@@ -43,6 +60,23 @@ This log documents every major prompt, AI tool interaction, architectural decisi
   - Structured schema output via Gemini 2.5 Flash with strict Pydantic parsing and rule-based fallback.
 
 ---
+
+## Log Entry 3: Multimodal Gemini AI, Safety Rubric, Injection Defense & Fallback
+- **Timestamp**: 2026-11-21 10:58 IST
+- **Phase**: Phase 2 (AI Classification, Rubric, and Fallback Engine)
+- **Tool**: Google Antigravity (Gemini 3.8 Flash)
+- **Prompt Summary**:
+  Design versioned system prompt (`classifier_v1.py`) with canonical category schema, safety-first severity rubric, strict JSON output structure, prompt injection boundary defenses, and multilingual translation support. Implement `ai_classifier.py` with multimodal image reading and single-attempt retry. Construct deterministic rule-based fallback classifier (`fallback_classifier.py`) spanning English, Hindi, Kannada, Tamil, Telugu, and Hinglish. Wire intake endpoint to automated classification.
+- **Artifacts Produced**:
+  - `backend/prompts/classifier_v1.py` (versioned prompt template, delimited user block, strict JSON schema instructions)
+  - `backend/services/fallback_classifier.py` (deterministic regex and keyword classifier across 10 categories and 4 severities)
+  - `backend/services/ai_classifier.py` (Gemini API integration with schema validation, retry mechanism, multimodal support, and graceful fallback)
+  - `backend/routes/complaints.py` (updated intake endpoint executing automated classification and dynamic department routing)
+  - `backend/tests/test_rubric.py` (unit tests verifying category limits, department completeness, and safety priority logic)
+  - `backend/tests/test_validation.py` (unit tests verifying Pydantic validation, injection delimitation, and crash resilience)
+- **Verification**:
+  - Ran `pytest backend/tests/ -v`: 23 of 23 unit tests passed with 100% success.
+
 
 ## Log Entry 2: Backend Skeleton, Data Models & Complaint Intake Pipeline
 - **Timestamp**: 2026-11-21 10:54 IST
