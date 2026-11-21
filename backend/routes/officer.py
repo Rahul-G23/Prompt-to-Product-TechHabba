@@ -6,13 +6,14 @@ status progression, and manual overrides with comprehensive audit logging.
 
 from datetime import datetime, timezone
 from typing import Optional, List
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from sqlalchemy import case, desc, asc
 
 from database import get_db
 from models import Ticket, AuditLog
-from schemas import TicketRead, TicketDetailRead, OfficerUpdateRequest, AuditLogRead
+from schemas import TicketRead, TicketDetailRead, OfficerUpdateRequest, AuditLogRead, AuditLogGlobalRead
+from services.image_processor import sanitize_and_save_image
 from config import ALLOWED_CATEGORIES, ALLOWED_SEVERITIES, ALLOWED_STATUSES, DEPARTMENTS
 
 router = APIRouter(prefix="/api/officer", tags=["Officer Operations"])
@@ -249,6 +250,13 @@ def update_ticket(
     if payload.resolution_notes is not None:
         ticket.resolution_notes = payload.resolution_notes
 
+    if payload.completion_summary is not None:
+        ticket.completion_summary = payload.completion_summary
+
+    if payload.completion_photo_path is not None:
+        ticket.completion_photo_path = payload.completion_photo_path
+        ticket.has_completion_photo = True
+
     # Clear needs_review flag upon manual officer intervention
     if ticket.needs_review:
         ticket.needs_review = False
@@ -266,3 +274,108 @@ def update_ticket(
     db.commit()
     db.refresh(ticket)
     return get_ticket_detail(ticket.id, db)
+
+
+@router.post("/tickets/{ticket_id}/resolve", response_model=TicketDetailRead)
+async def resolve_ticket(
+    ticket_id: str,
+    completion_summary: str = Form(..., description="Summary of work completed by the municipal department"),
+    completion_photo: UploadFile = File(..., description="Mandatory photo proof of the completed/resolved work"),
+    officer_name: Optional[str] = Form("Duty Officer"),
+    db: Session = Depends(get_db)
+):
+    """
+    Formally resolves an issue.
+    Requires both a concise completion summary and an after/completion photograph.
+    Saves and re-encodes the completion photo, stamps resolved_at timestamp, and records an audit log.
+    """
+    clean_id = ticket_id.strip().upper()
+    ticket = db.query(Ticket).filter(Ticket.id == clean_id).first()
+    if not ticket:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Ticket '{clean_id}' not found."
+        )
+
+    summary_clean = completion_summary.strip()
+    if len(summary_clean) < 5:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A substantive completion summary (minimum 5 characters) is required to resolve a civic issue."
+        )
+
+    if not completion_photo or not completion_photo.filename:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A completion photo showing the resolved issue is strictly required."
+        )
+
+    # Re-encode and save completion photo securely
+    saved_photo_path = sanitize_and_save_image(completion_photo)
+
+    now = datetime.now(timezone.utc)
+    old_status = ticket.status
+    ticket.status = "resolved"
+    ticket.resolved_at = now
+    ticket.completion_summary = summary_clean
+    ticket.resolution_notes = summary_clean
+    ticket.completion_photo_path = saved_photo_path
+    ticket.has_completion_photo = True
+    ticket.assigned_officer = officer_name or ticket.assigned_officer
+
+    # Record Audit Log
+    db.add(AuditLog(
+        ticket_id=ticket.id,
+        action="issue_resolved",
+        field_changed="status",
+        old_value=old_status,
+        new_value="resolved",
+        reason=f"Completed work: {summary_clean}",
+        officer_name=officer_name or "Duty Officer",
+        created_at=now
+    ))
+
+    db.commit()
+    db.refresh(ticket)
+    return get_ticket_detail(ticket.id, db)
+
+
+@router.get("/logs", response_model=List[AuditLogGlobalRead])
+def list_audit_logs(
+    limit: int = Query(100, ge=1, le=500),
+    action: Optional[str] = Query(None),
+    ticket_id: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Returns global audit logs for administrator oversight.
+    Allows auditing all manual overrides, status transitions, and resolution records.
+    """
+    query = db.query(AuditLog, Ticket.category, Ticket.severity).join(Ticket, AuditLog.ticket_id == Ticket.id)
+
+    if action:
+        query = query.filter(AuditLog.action == action)
+    if ticket_id:
+        query = query.filter(AuditLog.ticket_id == ticket_id.strip().upper())
+
+    results = query.order_by(desc(AuditLog.created_at)).limit(limit).all()
+
+    formatted = []
+    for log, cat, sev in results:
+        entry = AuditLogGlobalRead(
+            id=log.id,
+            ticket_id=log.ticket_id,
+            created_at=log.created_at,
+            action=log.action,
+            field_changed=log.field_changed,
+            old_value=log.old_value,
+            new_value=log.new_value,
+            reason=log.reason,
+            officer_name=log.officer_name,
+            category=cat,
+            severity=sev
+        )
+        formatted.append(entry)
+
+    return formatted
+

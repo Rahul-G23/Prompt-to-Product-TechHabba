@@ -203,6 +203,61 @@ export default function TrackTicket({ initialTicketId }) {
               </div>
             )}
           </div>
+
+          {/* Verified Resolution Proof (Completion Summary + Completed Photo) */}
+          {(ticket.status === 'resolved' || ticket.has_completion_photo || ticket.completion_summary) && (
+            <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border-2 border-emerald-300 dark:border-emerald-800 space-y-3">
+              <div className="flex items-center gap-2 text-emerald-900 dark:text-emerald-300">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                <h3 className="text-sm font-bold uppercase tracking-wider">
+                  Verified Municipal Work Completion Proof
+                </h3>
+              </div>
+
+              {ticket.completion_summary && (
+                <div className="p-3 rounded-lg bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-900 text-xs">
+                  <span className="font-semibold text-slate-500 block mb-0.5">Officer Completion Statement:</span>
+                  <p className="text-slate-800 dark:text-slate-200 font-medium">
+                    {ticket.completion_summary}
+                  </p>
+                  {ticket.resolved_at && (
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Completed: {new Date(ticket.resolved_at).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Photo Proof Display (Before & After) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                {ticket.photo_path && (
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-500 block mb-1">
+                      Initial Citizen Report (Before):
+                    </span>
+                    <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                      <a href={ticket.photo_path} target="_blank" rel="noopener noreferrer">
+                        <img src={ticket.photo_path} alt="Before" className="w-full h-36 object-contain" />
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {ticket.completion_photo_path && (
+                  <div>
+                    <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 block mb-1">
+                      Completed Resolution Proof (After):
+                    </span>
+                    <div className="rounded-lg overflow-hidden border border-emerald-300 dark:border-emerald-700 bg-white dark:bg-slate-900">
+                      <a href={ticket.completion_photo_path} target="_blank" rel="noopener noreferrer">
+                        <img src={ticket.completion_photo_path} alt="After" className="w-full h-36 object-contain" />
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

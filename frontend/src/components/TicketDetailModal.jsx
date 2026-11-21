@@ -5,10 +5,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { getTicketDetail, updateTicket } from '../services/api';
+import { getTicketDetail, updateTicket, resolveTicketWithProof } from '../services/api';
 import SeverityBadge from './SeverityBadge';
 import StatusBadge from './StatusBadge';
-import { X, AlertTriangle, AlertCircle, RefreshCw, MapPin, User, Clock, ShieldAlert, Check } from './Icons';
+import { X, AlertTriangle, AlertCircle, RefreshCw, MapPin, User, Clock, ShieldAlert, Check, CheckCircle2, Camera } from './Icons';
 import { ALLOWED_CATEGORIES, ALLOWED_SEVERITIES, ALLOWED_STATUSES } from '../config';
 
 export default function TicketDetailModal({ ticketId, onClose, onTicketUpdated }) {
@@ -26,6 +26,13 @@ export default function TicketDetailModal({ ticketId, onClose, onTicketUpdated }
   const [resolutionNotes, setResolutionNotes] = useState('');
   const [overrideReason, setOverrideReason] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // Completion proof states
+  const [showResolveForm, setShowResolveForm] = useState(false);
+  const [completionSummary, setCompletionSummary] = useState('');
+  const [completionPhoto, setCompletionPhoto] = useState(null);
+  const [completionPhotoPreview, setCompletionPhotoPreview] = useState(null);
+  const [resolving, setResolving] = useState(false);
 
   useEffect(() => {
     loadTicket();
@@ -84,6 +91,51 @@ export default function TicketDetailModal({ ticketId, onClose, onTicketUpdated }
     }
   };
 
+  const handlePhotoSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Completed photo must be 5 MB or smaller.');
+      return;
+    }
+    setCompletionPhoto(file);
+    setCompletionPhotoPreview(URL.createObjectURL(file));
+  };
+
+  const handleResolveSubmit = async (e) => {
+    e.preventDefault();
+    if (!completionSummary.trim() || completionSummary.trim().length < 5) {
+      setError('Please provide a substantive summary (at least 5 characters) of the completed work.');
+      return;
+    }
+    if (!completionPhoto) {
+      setError('A photo proving the completed/resolved work is required.');
+      return;
+    }
+
+    try {
+      setResolving(true);
+      setError(null);
+      const fd = new FormData();
+      fd.append('completion_summary', completionSummary.trim());
+      fd.append('completion_photo', completionPhoto);
+      fd.append('officer_name', assignedOfficer.trim() || 'Duty Municipal Officer');
+
+      const updated = await resolveTicketWithProof(ticket.id, fd);
+      setTicket(updated);
+      setStatus('resolved');
+      setSaveSuccess(true);
+      setShowResolveForm(false);
+      setTimeout(() => setSaveSuccess(false), 2500);
+      if (onTicketUpdated) onTicketUpdated(updated);
+    } catch (err) {
+      setError(err.message || 'Failed to submit completion proof.');
+    } finally {
+      setResolving(false);
+    }
+  };
+
+
   if (!ticketId) return null;
 
   return (
@@ -100,7 +152,7 @@ export default function TicketDetailModal({ ticketId, onClose, onTicketUpdated }
                 <SeverityBadge severity={ticket.severity} />
                 <StatusBadge status={ticket.status} />
                 {ticket.is_duplicate && (
-                  <span className="px-2 py-0.5 text-xs rounded bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                  <span className="px-2 py-0.5 text-xs rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
                     Duplicate Grievance
                   </span>
                 )}
@@ -289,17 +341,17 @@ export default function TicketDetailModal({ ticketId, onClose, onTicketUpdated }
 
               {/* Linked Duplicates Section */}
               {ticket.duplicates && ticket.duplicates.length > 0 && (
-                <div className="p-4 rounded-lg bg-purple-50/60 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-purple-900 dark:text-purple-300 mb-2">
+                <div className="p-4 rounded-lg bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-900 dark:text-indigo-300 mb-2">
                     Linked Duplicate Grievances ({ticket.duplicates.length})
                   </h4>
                   <div className="space-y-2">
                     {ticket.duplicates.map((dup) => (
                       <div
                         key={dup.id}
-                        className="text-xs p-2 rounded bg-white dark:bg-slate-900 border border-purple-100 dark:border-purple-950 flex items-center justify-between"
+                        className="text-xs p-2 rounded bg-white dark:bg-slate-900 border border-indigo-100 dark:border-indigo-950 flex items-center justify-between"
                       >
-                        <span className="font-mono font-medium text-purple-700 dark:text-purple-400">
+                        <span className="font-mono font-medium text-indigo-700 dark:text-indigo-400">
                           {dup.id}
                         </span>
                         <span className="text-slate-600 dark:text-slate-400 truncate max-w-xs">
@@ -311,6 +363,144 @@ export default function TicketDetailModal({ ticketId, onClose, onTicketUpdated }
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* Verified Work Completion Dossier (If Resolved) */}
+              {(ticket.has_completion_photo || ticket.completion_summary) && (
+                <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border-2 border-emerald-300 dark:border-emerald-800 space-y-3">
+                  <div className="flex items-center gap-2 text-emerald-900 dark:text-emerald-300">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                    <h4 className="text-sm font-bold uppercase tracking-wider">
+                      Verified Field Resolution Proof
+                    </h4>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-xs text-slate-500 font-semibold block mb-1">
+                        Work Completion Summary:
+                      </span>
+                      <p className="text-xs text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 p-3 rounded-lg border border-emerald-200 dark:border-emerald-900">
+                        {ticket.completion_summary || ticket.resolution_notes}
+                      </p>
+                      {ticket.resolved_at && (
+                        <p className="text-[11px] text-slate-400 mt-1">
+                          Resolved on: {new Date(ticket.resolved_at).toLocaleString()}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <span className="text-xs text-slate-500 font-semibold block mb-1">
+                        Completed Work Photo Proof:
+                      </span>
+                      {ticket.completion_photo_path ? (
+                        <div className="rounded-lg overflow-hidden border border-emerald-200 dark:border-emerald-900 bg-white dark:bg-slate-900">
+                          <a href={ticket.completion_photo_path} target="_blank" rel="noopener noreferrer">
+                            <img
+                              src={ticket.completion_photo_path}
+                              alt="Completed Resolution Proof"
+                              className="w-full h-44 object-contain"
+                            />
+                          </a>
+                        </div>
+                      ) : (
+                        <div className="p-4 text-xs text-slate-400 italic bg-white dark:bg-slate-900 rounded-lg">
+                          No photo proof uploaded.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Resolution Action Trigger / Form */}
+              {ticket.status !== 'resolved' && (
+                <div className="p-4 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-300 dark:border-emerald-800 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-900 dark:text-emerald-300">
+                        Formal Issue Completion Sign-Off
+                      </h4>
+                      <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                        Once repairs are finished, provide a completion summary and upload on-site photographic proof.
+                      </p>
+                    </div>
+                    {!showResolveForm && (
+                      <button
+                        type="button"
+                        onClick={() => setShowResolveForm(true)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>Resolve Issue Now</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {showResolveForm && (
+                    <form onSubmit={handleResolveSubmit} className="pt-3 border-t border-emerald-200 dark:border-emerald-900 space-y-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                          Completion Summary <span className="text-red-500">*</span>
+                        </label>
+                        <textarea
+                          required
+                          rows="2"
+                          value={completionSummary}
+                          onChange={(e) => setCompletionSummary(e.target.value)}
+                          placeholder="Detail the work carried out (e.g., Pothole excavated, cold-mix asphalt laid and leveled flush with road)."
+                          className="w-full text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 focus:border-emerald-600 focus:outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                          Upload Completed / After Photo Proof <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="file"
+                          required
+                          accept="image/jpeg,image/png"
+                          onChange={handlePhotoSelect}
+                          className="text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-100 file:text-emerald-800 dark:file:bg-emerald-950 dark:file:text-emerald-300 hover:file:bg-emerald-200"
+                        />
+                        {completionPhotoPreview && (
+                          <div className="mt-2 w-32 h-24 rounded-lg overflow-hidden border border-slate-300 dark:border-slate-700">
+                            <img src={completionPhotoPreview} alt="Preview" className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-end gap-2 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowResolveForm(false)}
+                          className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={resolving}
+                          className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-60"
+                        >
+                          {resolving ? (
+                            <>
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                              <span>Submitting proof...</span>
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Submit Resolution &amp; Close</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </form>
+                  )}
                 </div>
               )}
 
@@ -467,7 +657,7 @@ export default function TicketDetailModal({ ticketId, onClose, onTicketUpdated }
                           </p>
                         )}
                         <p className="text-slate-500 dark:text-slate-400 italic mt-0.5">
-                          "{log.reason}" &mdash; by {log.officer_name}
+                          "{log.reason}" - by {log.officer_name}
                         </p>
                       </div>
                     ))}

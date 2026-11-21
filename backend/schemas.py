@@ -108,6 +108,9 @@ class TicketRead(BaseModel):
     assigned_officer: Optional[str] = None
     resolution_notes: Optional[str] = None
     resolved_at: Optional[datetime] = None
+    completion_summary: Optional[str] = None
+    completion_photo_path: Optional[str] = None
+    has_completion_photo: bool = False
     confidence_score: float
     needs_review: bool
     review_reason: Optional[str] = None
@@ -134,6 +137,8 @@ class OfficerUpdateRequest(BaseModel):
     secondary_department: Optional[str] = None
     assigned_officer: Optional[str] = None
     resolution_notes: Optional[str] = None
+    completion_summary: Optional[str] = None
+    completion_photo_path: Optional[str] = None
     override_reason: Optional[str] = None
     officer_name: Optional[str] = "Duty Officer"
 
@@ -171,3 +176,32 @@ class AnalyticsSummary(BaseModel):
     tickets_by_category: Dict[str, int]
     tickets_by_department: Dict[str, int]
     tickets_by_status: Dict[str, int]
+
+
+# Global Audit Log Read (includes ticket category/primary dept for log table display)
+class AuditLogGlobalRead(AuditLogRead):
+    category: Optional[str] = None
+    severity: Optional[str] = None
+
+
+# Authentication Schemas
+class AuthLoginRequest(BaseModel):
+    role: str = Field(..., description="Role: 'admin' or 'citizen'")
+    username: Optional[str] = Field(None, description="Username or Citizen Identifier")
+    password: Optional[str] = Field(None, description="Password (for administrative authentication)")
+    phone_number: Optional[str] = Field(None, description="Phone number (for citizen authentication)")
+
+
+class AuthUser(BaseModel):
+    id: str
+    name: str
+    role: str
+    designation: Optional[str] = None
+    department: Optional[str] = None
+
+
+class AuthLoginResponse(BaseModel):
+    success: bool
+    token: str
+    user: AuthUser
+

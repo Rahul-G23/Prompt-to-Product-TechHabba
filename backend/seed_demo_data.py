@@ -244,6 +244,7 @@ def seed_demo_data():
     # 7. Resolved Ticket (Water Supply) - for Analytics resolution time!
     resolved_time = now - timedelta(hours=2)
     created_time = now - timedelta(hours=6, minutes=30)
+    img_resolved = create_sample_photo("seed_valve_resolved.jpg", "Repaired Water Main Valve & Pressure Verification", color=(210, 245, 220))
     t7 = Ticket(
         id="CL-2611-S1008",
         created_at=created_time,
@@ -261,7 +262,10 @@ def seed_demo_data():
         primary_department="Water Supply & Sewerage Board",
         status="resolved",
         assigned_officer="Water Board Asst Engineer Ramesh",
-        resolution_notes="Damaged brass sluice valve replaced and pipeline pressure tested successfully. Zero leakage.",
+        resolution_notes="Damaged brass sluice valve replaced with new ISO-certified flanged valve and pipeline pressure tested successfully. Zero leakage verified.",
+        completion_summary="Damaged brass sluice valve replaced with new ISO-certified flanged valve and pipeline pressure tested successfully. Zero leakage verified on site.",
+        completion_photo_path=img_resolved,
+        has_completion_photo=True,
         resolved_at=resolved_time,
         confidence_score=0.95,
         needs_review=False,

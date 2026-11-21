@@ -83,3 +83,47 @@ export async function getAnalytics() {
   }
   return data;
 }
+
+export async function loginUser(payload) {
+  const response = await fetch(`${API_BASE}/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.detail || "Authentication failed.");
+  }
+  return data;
+}
+
+export async function resolveTicketWithProof(ticketId, formData) {
+  const cleanId = encodeURIComponent(ticketId.trim().toUpperCase());
+  const response = await fetch(`${API_BASE}/officer/tickets/${cleanId}/resolve`, {
+    method: "POST",
+    body: formData,
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.detail || "Failed to submit resolution proof.");
+  }
+  return data;
+}
+
+export async function getOfficerLogs(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.limit) params.append("limit", filters.limit);
+  if (filters.action) params.append("action", filters.action);
+  if (filters.ticket_id) params.append("ticket_id", filters.ticket_id);
+
+  const url = `${API_BASE}/officer/logs?${params.toString()}`;
+  const response = await fetch(url);
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.detail || "Failed to fetch audit logs.");
+  }
+  return data;
+}
+

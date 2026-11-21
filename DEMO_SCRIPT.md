@@ -70,16 +70,15 @@ This script guides the presenter step-by-step through a live jury presentation o
 
 ---
 
-### Act 5: Municipal Officer Dashboard & Live Audit Trail (45 Seconds)
-- **Speaker Action**: Switch to the **Officer Console** tab.
+### Act 5: Municipal Officer Dashboard, Audit Logs & Verified Resolution Proof (45 Seconds)
+- **Speaker Action**: Click **Switch Role** in the top navigation, and select **Login as Administrator** (or use the one-click demo access).
 - **Presenter Dialogue**:
-  > *"Now let's step into the shoes of the municipal ward officer.
-  > Notice the queue: it is strictly sorted by safety priority. The Critical sparking live wire and open manhole appear at the very top. Cosmetic issues like faded zebra crossings are at the bottom.
-  > Every counter you see here is computed from real database records, with zero mock numbers."*
-- **Speaker Action**: Click on the top Critical ticket to open the **Ticket Dossier Modal**.
-- **Presenter Dialogue**:
-  > *"In the ticket dossier, the officer sees the original regional text, the AI-verified English translation, the photo, the AI safety reasoning, and linked duplicates.
-  > If the officer needs to override a category or escalate priority, they can do so right here. Crucially, every single override requires a mandatory justification and is permanently stamped in our immutable municipal audit log."*
-- **Speaker Action**: Switch briefly to the **Analytics** tab and show the real-time breakdown of workload by department and severity.
+  > *"Now let's step into the shoes of the municipal ward officer through our dedicated Administrator portal.
+  > Notice the five specialized views: Reports, Issues, Logs, Analysis, and Tracking.
+  > Under 'Reports', the queue is strictly sorted by safety priority. The Critical sparking live wire and open manhole appear at the very top.
+  > Under 'Logs', our immutable audit trail records every status transition and manual override.
+  > And most importantly: under our quality assurance protocol, an officer cannot simply close an issue without accountability. When marking a ticket 'Resolved', the system requires a concise completion summary and mandatory photographic proof of the completed repair.
+  > Citizens tracking their complaint can then see the verified Before and After photographic proof side-by-side, guaranteeing trust and municipal accountability."*
+- **Speaker Action**: Switch to the **Logs** tab and show the immutable audit trail.
 - **Presenter Dialogue**:
   > *"CivicLens provides complete transparency from the citizen's mobile screen to the municipal commissioner's desk. Thank you!"*

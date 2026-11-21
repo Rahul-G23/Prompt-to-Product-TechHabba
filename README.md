@@ -1,6 +1,6 @@
 # CivicLens: Intelligent Citizen Complaint Triage System
 
-[![Build Status](https://img.shields.io/badge/Unit%20Tests-27%2F27%20Passing-emerald)](backend/tests/)
+[![Build Status](https://img.shields.io/badge/Unit%20Tests-32%2F32%20Passing-emerald)](backend/tests/)
 [![Category Accuracy](https://img.shields.io/badge/Category%20Accuracy-96.4%25-blue)](backend/eval_results.json)
 [![Severity Accuracy](https://img.shields.io/badge/Severity%20Accuracy-92.9%25-blue)](backend/eval_results.json)
 [![Safety Violations](https://img.shields.io/badge/Safety%20Violations-0%20(Zero%20Tolerance)-emerald)](backend/eval_results.json)
@@ -13,14 +13,18 @@ CivicLens turns unstructured citizen submissions (in **English, Hindi, Kannada, 
 
 ## Key Features
 
-1. **Multilingual Intake Engine**: Accepts free-form plain text in regional languages and scripts, transliterated colloquial text (Hinglish, Kanglish), or multimodal photo-first complaints. Preserves original text and stores verified English translations.
-2. **Safety-First Severity Rubric**: Standardized 4-tier rubric (`Critical`, `High`, `Medium`, `Low`) based strictly on imminent danger to life and bodily safety rather than mere inconvenience.
-3. **Automated Departmental Routing**: Configurable rule engine mapping categories to primary and secondary municipal departments without code changes (`backend/departments.json`).
-4. **Intelligent Deduplication Engine**: Clusters incoming complaints against existing open tickets within geographic proximity (Haversine distance $\le 300\text{m}$) and semantic similarity, attaching duplicates to parent tickets.
-5. **Municipal Officer Dashboard**: High-contrast, WCAG AA compliant operational console sorted strictly by priority. Includes manual override controls with complete audit logging.
-6. **Citizen Ticket Tracking**: Public-facing status tracking portal allowing citizens to monitor progress via ticket reference ID with a visual remediation lifecycle stepper.
-7. **Real Municipal Analytics**: 100% real persisted data calculating workload, category distributions, severity allocations, and average resolution times.
-8. **Robust Fail-Safe & Safety**: Strict prompt boundaries against injection, PII protection (phone numbers excluded from AI prompts), Pydantic v2 schema validation, single-attempt retry, and deterministic rule-based keyword fallback if AI services are unavailable.
+1. **Role-Based Authentication Gateway**: Dedicated login interfaces for **Citizens** and **Administrators** (Municipal Officers).
+   - **Citizen Portal**: Report an Issue (multilingual, GPS, photo), Track Report (live lifecycle stepper with Before/After verification photos), and Public Transparency Analysis.
+   - **Administrator Console**: Reports (priority queue & filters), Issues (focused active dispatch console with Critical alerts), Logs (complete municipal audit trail), Analysis (deep SLA performance metrics), and Tracking (instant dossier lookup).
+2. **Mandatory Issue Resolution Proof**: Under municipal accountability rules, officers resolving an issue must submit a concise work completion summary and upload on-site photographic proof of the completed repair.
+3. **Multilingual Intake Engine**: Accepts free-form plain text in regional languages and scripts, transliterated colloquial text (Hinglish, Kanglish), or multimodal photo-first complaints. Preserves original text and stores verified English translations.
+4. **Safety-First Severity Rubric**: Standardized 4-tier rubric (`Critical`, `High`, `Medium`, `Low`) based strictly on imminent danger to life and bodily safety rather than mere inconvenience.
+5. **Automated Departmental Routing**: Configurable rule engine mapping categories to primary and secondary municipal departments without code changes (`backend/departments.json`).
+6. **Intelligent Deduplication Engine**: Clusters incoming complaints against existing open tickets within geographic proximity (Haversine distance $\le 300\text{m}$) and semantic similarity, attaching duplicates to parent tickets.
+7. **Complete Municipal Audit Trail**: Immutable log of all manual overrides (category, severity, routing), status updates, duplicate detections, and verified resolution proofs with officer timestamps and justifications.
+8. **Real Municipal Analytics**: 100% real persisted data calculating workload, category distributions, severity allocations, and average resolution times.
+9. **DPDP Act 2023 Privacy & Terms**: Comprehensive Privacy Policy (zero PII sent to LLMs, server-side EXIF stripping) and Terms of Service (civic SLAs, genuine reporting rules).
+10. **Design Compliance**: Crisp SVG favicon, custom domain metadata, WCAG AA contrast, dark mode, zero purple gradients, zero pill buttons, and zero em dashes.
 
 ---
 

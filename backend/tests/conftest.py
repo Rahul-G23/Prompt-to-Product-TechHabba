@@ -10,6 +10,10 @@ from sqlalchemy.pool import StaticPool
 
 from main import app
 from database import Base, get_db
+import services.ai_classifier as ai_classifier_module
+from services.fallback_classifier import classify_with_fallback_rules
+
+import routes.complaints as complaints_route_mod
 
 # Shared in-memory SQLite database with StaticPool
 TEST_DATABASE_URL = "sqlite:///:memory:"
@@ -26,11 +30,27 @@ def setup_test_db():
     yield
     Base.metadata.drop_all(bind=engine)
 
+@pytest.fixture(autouse=True)
+def mock_gemini_in_tests(monkeypatch):
+    """
+    Ensures unit tests run deterministically offline without network calls.
+    Uses the high-accuracy fallback rules engine.
+    """
+    def mock_classify(raw_text, photo_path=None):
+        out = classify_with_fallback_rules(raw_text, has_photo=bool(photo_path))
+        return (out, "rule_based_fallback", False, None)
+
+    monkeypatch.setattr(complaints_route_mod, "classify_complaint", mock_classify)
+    monkeypatch.setattr(ai_classifier_module, "classify_complaint", mock_classify)
+
+
+
+
 @pytest.fixture
 def db_session():
     connection = engine.connect()
     transaction = connection.begin()
-    session = TestingSession(bind=connection)
+    session = TestingSession(bind=connection, join_transaction_mode="create_savepoint")
     yield session
     session.close()
     transaction.rollback()

@@ -13,6 +13,7 @@ from database import engine, Base
 from routes.complaints import router as complaints_router
 from routes.officer import router as officer_router
 from routes.analytics import router as analytics_router
+from routes.auth import router as auth_router
 
 # Initialize database tables
 Base.metadata.create_all(bind=engine)
@@ -45,6 +46,7 @@ app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 app.include_router(complaints_router)
 app.include_router(officer_router)
 app.include_router(analytics_router)
+app.include_router(auth_router)
 
 @app.get("/api/health")
 def health_check():

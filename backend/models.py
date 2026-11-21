@@ -50,6 +50,9 @@ class Ticket(Base):
     assigned_officer = Column(String(100), nullable=True)
     resolution_notes = Column(Text, nullable=True)
     resolved_at = Column(DateTime, nullable=True)
+    completion_summary = Column(Text, nullable=True)
+    completion_photo_path = Column(String(255), nullable=True)
+    has_completion_photo = Column(Boolean, default=False, nullable=False)
 
     # AI Quality & Confidence
     confidence_score = Column(Float, default=1.0, nullable=False)

@@ -202,7 +202,7 @@ Life-Safety Downgrade Violations: 0 (Zero tolerance: PASS)
 ## 8. Limitations & Scope Constraints
 
 In accordance with prototype development standards and the hackathon rules:
-1. **Officer Authentication**: For this demonstration prototype, the officer console is accessible without authentication to allow immediate jury evaluation. Production deployment will integrate Keycloak/Auth0 OIDC with Role-Based Access Control (RBAC).
+1. **Role-Based Authentication**: The prototype features a role-based authentication gateway (`LoginPage`) with dedicated portals for **Administrator** and **Citizen**, including demo credentials and 1-click evaluation access. Production deployment will federate with state Single Sign-On (SSO / DigiLocker / e-Pramaan) with multi-factor authentication.
 2. **GPS Accuracy**: Relies on browser-provided HTML5 geolocation. In indoor environments or desktop browsers without GPS chips, accuracy may default to IP-based city centroids.
 3. **Multimodal Bandwidth**: Photos are limited to 5 MB per submission. Video submissions and audio voice notes are not supported in this prototype.
 4. **Single-Node Rate Limiting**: The in-memory sliding-window rate limiter runs within the FastAPI process. In a distributed multi-replica deployment, Redis-backed rate limiting would be utilized.
