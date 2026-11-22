@@ -93,13 +93,20 @@ export async function getAnalytics() {
 }
 
 export async function loginUser(payload) {
-  const response = await fetch(`${API_BASE}/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    throw new Error(
+      `Cannot reach backend at ${API_BASE}. Check VITE_API_BASE_URL, backend deployment, and CORS_ORIGIN.`
+    );
+  }
   return readApiResponse(response, "Authentication failed.");
 }
 
